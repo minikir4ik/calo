@@ -37,6 +37,21 @@ struct WeeklyChartView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
+                    if totalWeek == 0 {
+                        VStack(spacing: 12) {
+                            Image(systemName: "chart.bar")
+                                .font(.system(size: 40))
+                                .foregroundStyle(CaloTheme.subtleText)
+                            Text("Start scanning to see your weekly trends")
+                                .font(.subheadline)
+                                .foregroundStyle(CaloTheme.subtleText)
+                                .multilineTextAlignment(.center)
+                        }
+                        .frame(height: 220)
+                        .frame(maxWidth: .infinity)
+                        .padding(.top, 8)
+                    }
+
                     Chart(weekData) { day in
                         BarMark(
                             x: .value("Day", day.weekday),

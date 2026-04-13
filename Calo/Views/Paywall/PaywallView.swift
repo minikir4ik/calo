@@ -53,7 +53,8 @@ struct PaywallView: View {
                             .foregroundStyle(.white)
                             .padding(16)
                             .frame(maxWidth: .infinity)
-                            .background(CaloTheme.coral.opacity(0.8), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .background(CaloTheme.coral, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .shadow(color: CaloTheme.coral.opacity(0.4), radius: 8, y: 4)
                         }
                         .buttonStyle(.plain)
 
@@ -83,6 +84,7 @@ struct PaywallView: View {
                             .padding(16)
                             .frame(maxWidth: .infinity)
                             .background(CaloTheme.coral, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .shadow(color: CaloTheme.coral.opacity(0.4), radius: 8, y: 4)
                         }
                         .buttonStyle(.plain)
                     }

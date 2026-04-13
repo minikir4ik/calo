@@ -3,7 +3,7 @@ import SwiftUI
 enum CaloTheme {
     static let coral = Color(red: 0.886, green: 0.427, blue: 0.353)
     static let background = Color.black
-    static let cardBackground = Color(white: 0.12)
+    static let cardBackground = Color(white: 0.10)
     static let subtleText = Color(white: 0.5)
     static let separator = Color(white: 0.18)
 

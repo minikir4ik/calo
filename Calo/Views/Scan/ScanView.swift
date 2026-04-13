@@ -44,9 +44,9 @@ struct ScanView: View {
                             .scaledToFill()
                     } else {
                         Color(white: 0.1)
-                        Image(systemName: "viewfinder")
-                            .font(.system(size: 60, weight: .ultraLight))
-                            .foregroundStyle(.white.opacity(0.15))
+                        Image(systemName: "camera.fill")
+                            .font(.system(size: 48))
+                            .foregroundStyle(.white.opacity(0.2))
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -92,7 +92,7 @@ struct ScanView: View {
             HStack(spacing: 16) {
                 if !foodDescription.isEmpty {
                     Button(action: { analyzeFood() }) {
-                        Text("Analyze")
+                        Text("Scan")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.white)
                             .frame(height: 44)
@@ -107,6 +107,9 @@ struct ScanView: View {
                         Circle()
                             .fill(CaloTheme.coral)
                             .frame(width: 70, height: 70)
+                        Image(systemName: "camera.fill")
+                            .font(.system(size: 24))
+                            .foregroundStyle(.white)
                         Circle()
                             .stroke(Color.white.opacity(0.25), lineWidth: 3)
                             .frame(width: 80, height: 80)
@@ -124,8 +127,7 @@ struct ScanView: View {
 
             Spacer().frame(height: 12)
         }
-        .navigationTitle("Scan")
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(true)
         .preferredColorScheme(.dark)
         }
         .fullScreenCover(isPresented: $showCamera) {

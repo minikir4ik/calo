@@ -10,7 +10,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("Account") {
+                Section {
                     HStack {
                         Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
                             .foregroundStyle(settings?.isPremium == true ? .yellow : .secondary)
@@ -32,9 +32,11 @@ struct SettingsView: View {
                         }
                         .foregroundStyle(CaloTheme.coral)
                     }
+                } header: {
+                    Text("Account").foregroundStyle(CaloTheme.coral)
                 }
 
-                Section("Daily Goals") {
+                Section {
                     if let settings {
                         GoalRow(label: "Calories", value: Binding(
                             get: { settings.dailyCalorieGoal },
@@ -56,9 +58,11 @@ struct SettingsView: View {
                             set: { settings.dailyFatGoal = $0 }
                         ), unit: "g", color: .purple)
                     }
+                } header: {
+                    Text("Daily Goals").foregroundStyle(CaloTheme.coral)
                 }
 
-                Section("About") {
+                Section {
                     LabeledContent("Version") {
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")
                     }
@@ -67,6 +71,8 @@ struct SettingsView: View {
                     }
                     Link("Privacy Policy", destination: URL(string: "https://minilabs.dev/calo/privacy")!)
                     Link("Terms of Service", destination: URL(string: "https://minilabs.dev/calo/terms")!)
+                } header: {
+                    Text("About").foregroundStyle(CaloTheme.coral)
                 }
             }
             .navigationTitle("Settings")

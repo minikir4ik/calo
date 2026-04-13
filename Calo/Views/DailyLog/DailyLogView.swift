@@ -6,7 +6,7 @@ struct DailyLogView: View {
     @Query(sort: \FoodEntry.timestamp, order: .reverse) private var allEntries: [FoodEntry]
     @Query private var allSettings: [UserSettings]
 
-    @State private var selectedDate: Date = .now
+    @State private var selectedDate: Date = Calendar.current.startOfDay(for: .now)
 
     private var settings: UserSettings? { allSettings.first }
 

@@ -31,8 +31,8 @@ enum GeminiError: LocalizedError {
 struct GeminiService {
     private static let endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
 
-    private static let prompt = """
-    You are a precise food identification system. Analyze the food photo and/or description and identify each distinct food item.
+    private static let imagePrompt = """
+    You are a precise food identification system. Analyze the food photo and description and identify each distinct food item.
 
     Return ONLY valid JSON with this exact structure:
     {"foods": [{"name": "specific food name", "grams": 150, "confidence": 0.92, "est_cal_per100g": 165, "est_protein_per100g": 31, "est_carbs_per100g": 0, "est_fat_per100g": 3.6}]}
@@ -41,6 +41,21 @@ struct GeminiService {
     - "name": use a specific, USDA-searchable food name (e.g. "chicken breast, grilled" not just "chicken")
     - "grams": estimated total weight of that item in grams
     - "confidence": 0-1 confidence in identification
+    - "est_*_per100g": your best nutrient estimates per 100g (used as fallback if USDA lookup fails)
+    - List each food item separately
+    - Be precise with portion/weight estimates
+    """
+
+    private static let textPrompt = """
+    You are a precise food nutrition estimation system. Estimate the nutritional content of the described food.
+
+    Return ONLY valid JSON with this exact structure:
+    {"foods": [{"name": "specific food name", "grams": 150, "confidence": 0.85, "est_cal_per100g": 165, "est_protein_per100g": 31, "est_carbs_per100g": 0, "est_fat_per100g": 3.6}]}
+
+    Rules:
+    - "name": use a specific, USDA-searchable food name (e.g. "chicken breast, grilled" not just "chicken")
+    - "grams": estimated total weight for a typical serving in grams
+    - "confidence": 0-1 confidence in your estimate
     - "est_*_per100g": your best nutrient estimates per 100g (used as fallback if USDA lookup fails)
     - List each food item separately
     - Be precise with portion/weight estimates
@@ -61,9 +76,10 @@ struct GeminiService {
                     "data": imageData.base64EncodedString()
                 ]
             ])
+            parts.append(["text": "\(imagePrompt)\n\nFood: \(description)"])
+        } else {
+            parts.append(["text": "\(textPrompt)\n\nEstimate the nutritional content of: \(description)"])
         }
-
-        parts.append(["text": "\(prompt)\n\nFood: \(description)"])
 
         let body: [String: Any] = [
             "contents": [["parts": parts]],
