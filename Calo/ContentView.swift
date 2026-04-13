@@ -8,29 +8,16 @@ struct ContentView: View {
     var body: some View {
         TabView {
             ScanView()
-                .tabItem {
-                    Label("Scan", systemImage: "camera.fill")
-                }
-
+                .tabItem { Label("Scan", systemImage: "camera.fill") }
             DailyLogView()
-                .tabItem {
-                    Label("Log", systemImage: "list.bullet")
-                }
-
+                .tabItem { Label("Log", systemImage: "list.bullet") }
             WeeklyChartView()
-                .tabItem {
-                    Label("Charts", systemImage: "chart.bar.fill")
-                }
-
+                .tabItem { Label("Charts", systemImage: "chart.bar.fill") }
             SettingsView()
-                .tabItem {
-                    Label("Settings", systemImage: "gearshape.fill")
-                }
+                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
         }
         .tint(CaloTheme.coral)
         .preferredColorScheme(.dark)
-        .toolbarBackground(.ultraThinMaterial, for: .tabBar)
-        .toolbarBackground(.visible, for: .tabBar)
         .onAppear { ensureSettings() }
     }
 
