@@ -3,7 +3,6 @@ import SwiftData
 
 struct SettingsView: View {
     @Query private var allSettings: [UserSettings]
-    @AppStorage("appearance") private var appearance: String = "system"
     @State private var showPaywall = false
 
     private var settings: UserSettings? { allSettings.first }
@@ -12,35 +11,46 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 // Account
-                Section("Account") {
+                Section {
                     HStack {
-                        Label(
-                            settings?.isPremium == true ? "Premium" : "Free Plan",
-                            systemImage: settings?.isPremium == true ? "crown.fill" : "person.fill"
-                        )
-                        .foregroundStyle(settings?.isPremium == true ? .yellow : .primary)
+                        ZStack {
+                            Circle()
+                                .fill(settings?.isPremium == true ? Color.yellow.opacity(0.15) : CaloTheme.surfaceSecondary)
+                                .frame(width: 36, height: 36)
+                            Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
+                                .font(.system(size: 16))
+                                .foregroundStyle(settings?.isPremium == true ? .yellow : .secondary)
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(settings?.isPremium == true ? "Premium" : "Free Plan")
+                                .font(.body.weight(.medium))
+                            if let settings, !settings.isPremium {
+                                Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans) scans used today")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
 
                         Spacer()
 
                         if settings?.isPremium != true {
                             Button("Upgrade") { showPaywall = true }
                                 .font(.subheadline.bold())
-                                .foregroundStyle(CaloTheme.coral)
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 6)
+                                .background(CaloTheme.coral)
+                                .clipShape(Capsule())
                         }
                     }
-
-                    if let settings, !settings.isPremium {
-                        HStack {
-                            Text("Scans today")
-                            Spacer()
-                            Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans)")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
+                    .listRowBackground(CaloTheme.surfacePrimary)
+                } header: {
+                    Text("Account")
                 }
 
                 // Goals
-                Section("Daily Goals") {
+                Section {
                     if let settings {
                         GoalRow(label: "Calories", value: Binding(
                             get: { settings.dailyCalorieGoal },
@@ -62,25 +72,38 @@ struct SettingsView: View {
                             set: { settings.dailyFatGoal = $0 }
                         ), unit: "g", color: .purple)
                     }
-                }
-
-                // Appearance
-                Section("Appearance") {
-                    Picker("Theme", selection: $appearance) {
-                        Text("System").tag("system")
-                        Text("Light").tag("light")
-                        Text("Dark").tag("dark")
-                    }
+                } header: {
+                    Text("Daily Goals")
                 }
 
                 // Legal
-                Section("Legal") {
-                    Link("Privacy Policy", destination: URL(string: "https://minilabs.dev/calo/privacy")!)
-                    Link("Terms of Service", destination: URL(string: "https://minilabs.dev/calo/terms")!)
+                Section {
+                    Link(destination: URL(string: "https://minilabs.dev/calo/privacy")!) {
+                        HStack {
+                            Text("Privacy Policy")
+                                .foregroundStyle(.white)
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Link(destination: URL(string: "https://minilabs.dev/calo/terms")!) {
+                        HStack {
+                            Text("Terms of Service")
+                                .foregroundStyle(.white)
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                } header: {
+                    Text("Legal")
                 }
 
                 // About
-                Section("About") {
+                Section {
                     HStack {
                         Text("Version")
                         Spacer()
@@ -93,21 +116,19 @@ struct SettingsView: View {
                         Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
                             .foregroundStyle(.secondary)
                     }
+                } header: {
+                    Text("About")
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.black)
+            .listStyle(.insetGrouped)
             .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
             }
-            .preferredColorScheme(colorScheme)
-        }
-    }
-
-    private var colorScheme: ColorScheme? {
-        switch appearance {
-        case "light": return .light
-        case "dark": return .dark
-        default: return nil
         }
     }
 }

@@ -6,56 +6,118 @@ struct PaywallView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 28) {
+                VStack(spacing: 32) {
                     // Hero
-                    VStack(spacing: 12) {
-                        Image(systemName: "crown.fill")
-                            .font(.system(size: 56))
-                            .foregroundStyle(.yellow)
+                    VStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(
+                                    LinearGradient(
+                                        colors: [CaloTheme.coral, CaloTheme.coral.opacity(0.6)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .frame(width: 80, height: 80)
+                            Image(systemName: "crown.fill")
+                                .font(.system(size: 36))
+                                .foregroundStyle(.white)
+                        }
 
                         Text("Unlock Calo Premium")
-                            .font(.title.bold())
+                            .font(.title2.bold())
+                            .foregroundStyle(.white)
 
                         Text("Get unlimited scans and exclusive features")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 24)
 
                     // Benefits
-                    VStack(alignment: .leading, spacing: 16) {
+                    VStack(spacing: 0) {
                         BenefitRow(icon: "infinity", title: "Unlimited Scans", subtitle: "No daily limits")
+                        Rectangle().fill(CaloTheme.separator).frame(height: 0.5).padding(.leading, 52)
                         BenefitRow(icon: "chart.bar.fill", title: "Advanced Analytics", subtitle: "Detailed macro tracking")
+                        Rectangle().fill(CaloTheme.separator).frame(height: 0.5).padding(.leading, 52)
                         BenefitRow(icon: "square.and.arrow.up", title: "Clean Sharing", subtitle: "No watermark on shared results")
+                        Rectangle().fill(CaloTheme.separator).frame(height: 0.5).padding(.leading, 52)
                         BenefitRow(icon: "icloud.fill", title: "Cloud Sync", subtitle: "Access data across devices")
+                        Rectangle().fill(CaloTheme.separator).frame(height: 0.5).padding(.leading, 52)
                         BenefitRow(icon: "star.fill", title: "Priority Support", subtitle: "Get help when you need it")
                     }
-                    .padding(.horizontal)
+                    .padding(.vertical, 4)
+                    .background(CaloTheme.surfacePrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .padding(.horizontal, 20)
 
-                    // Pricing options
+                    // Pricing
                     VStack(spacing: 12) {
                         // Weekly
-                        PricingButton(
-                            title: "Weekly",
-                            price: "$4.99",
-                            period: "per week",
-                            isPopular: false
-                        ) {
+                        Button {
                             // TODO: RevenueCat Phase 3
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Weekly")
+                                        .font(.headline)
+                                        .foregroundStyle(.white)
+                                    Text("per week")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                Spacer()
+                                Text("$4.99")
+                                    .font(.title3.bold())
+                                    .foregroundStyle(.white)
+                            }
+                            .padding(16)
+                            .background(CaloTheme.surfaceSecondary)
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
+                        .buttonStyle(.plain)
 
                         // Lifetime
-                        PricingButton(
-                            title: "Lifetime",
-                            price: "$29.99",
-                            period: "one-time purchase",
-                            isPopular: true
-                        ) {
+                        Button {
                             // TODO: RevenueCat Phase 3
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    HStack(spacing: 6) {
+                                        Text("Lifetime")
+                                            .font(.headline)
+                                            .foregroundStyle(.white)
+                                        Text("BEST VALUE")
+                                            .font(.caption2.bold())
+                                            .foregroundStyle(.white)
+                                            .padding(.horizontal, 8)
+                                            .padding(.vertical, 2)
+                                            .background(.white.opacity(0.2))
+                                            .clipShape(Capsule())
+                                    }
+                                    Text("one-time purchase")
+                                        .font(.caption)
+                                        .foregroundStyle(.white.opacity(0.7))
+                                }
+                                Spacer()
+                                Text("$29.99")
+                                    .font(.title3.bold())
+                                    .foregroundStyle(.white)
+                            }
+                            .padding(16)
+                            .background(
+                                LinearGradient(
+                                    colors: [CaloTheme.coral, CaloTheme.coral.opacity(0.8)],
+                                    startPoint: .leading,
+                                    endPoint: .trailing
+                                )
+                            )
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
+                        .buttonStyle(.plain)
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 20)
 
                     // Restore
                     Button("Restore Purchases") {
@@ -73,6 +135,14 @@ struct PaywallView: View {
                         .padding(.bottom, 20)
                 }
             }
+            .background(
+                LinearGradient(
+                    colors: [Color(white: 0.06), .black],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -93,65 +163,25 @@ struct BenefitRow: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Image(systemName: icon)
-                .font(.title3)
+            Image(systemName: "checkmark")
+                .font(.caption.weight(.bold))
                 .foregroundStyle(CaloTheme.coral)
-                .frame(width: 32)
+                .frame(width: 24, height: 24)
+                .background(CaloTheme.coral.opacity(0.15))
+                .clipShape(Circle())
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white)
                 Text(subtitle)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
+
+            Spacer()
         }
-    }
-}
-
-struct PricingButton: View {
-    let title: String
-    let price: String
-    let period: String
-    let isPopular: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                VStack(alignment: .leading, spacing: 2) {
-                    HStack {
-                        Text(title)
-                            .font(.headline)
-                        if isPopular {
-                            Text("BEST VALUE")
-                                .font(.caption2.bold())
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(CaloTheme.coral)
-                                .clipShape(Capsule())
-                        }
-                    }
-                    Text(period)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                Spacer()
-
-                Text(price)
-                    .font(.title3.bold())
-                    .foregroundStyle(CaloTheme.coral)
-            }
-            .padding()
-            .background(isPopular ? CaloTheme.coral.opacity(0.08) : Color(.tertiarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(isPopular ? CaloTheme.coral : Color.clear, lineWidth: 2)
-            )
-        }
-        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
     }
 }

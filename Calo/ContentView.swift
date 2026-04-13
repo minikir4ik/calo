@@ -5,6 +5,16 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var allSettings: [UserSettings]
 
+    init() {
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithDefaultBackground()
+        tabBarAppearance.backgroundColor = UIColor.black.withAlphaComponent(0.85)
+        let blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+        tabBarAppearance.backgroundEffect = blurEffect
+        UITabBar.appearance().standardAppearance = tabBarAppearance
+        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+    }
+
     var body: some View {
         TabView {
             ScanView()

@@ -30,15 +30,20 @@ struct WeeklyChartView: View {
         }
     }
 
+    private var totalWeek: Double { weekData.reduce(0.0) { $0 + $1.calories } }
+    private var avgDaily: Double { totalWeek / 7 }
+    private var highestDay: Double { weekData.map(\.calories).max() ?? 0 }
+    private var daysOnTarget: Int {
+        guard let goal = settings?.dailyCalorieGoal else { return 0 }
+        return weekData.filter { $0.calories <= Double(goal) && $0.calories > 0 }.count
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
                     // Chart
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Weekly Calories")
-                            .font(.headline)
-
                         Chart(weekData) { day in
                             BarMark(
                                 x: .value("Day", day.weekday),
@@ -49,12 +54,12 @@ struct WeeklyChartView: View {
                                     ? CaloTheme.coral
                                     : CaloTheme.coral.opacity(0.6)
                             )
-                            .cornerRadius(6)
+                            .cornerRadius(4)
 
                             if let goal = settings?.dailyCalorieGoal {
                                 RuleMark(y: .value("Goal", goal))
-                                    .foregroundStyle(.secondary.opacity(0.5))
-                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [5]))
+                                    .foregroundStyle(.white.opacity(0.3))
+                                    .lineStyle(StrokeStyle(lineWidth: 1, dash: [5, 3]))
                                     .annotation(position: .trailing, alignment: .leading) {
                                         Text("Goal")
                                             .font(.caption2)
@@ -63,7 +68,18 @@ struct WeeklyChartView: View {
                             }
                         }
                         .chartYAxis {
-                            AxisMarks(position: .leading)
+                            AxisMarks(position: .leading) { value in
+                                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5))
+                                    .foregroundStyle(Color.white.opacity(0.08))
+                                AxisValueLabel()
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .chartXAxis {
+                            AxisMarks { value in
+                                AxisValueLabel()
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                         .chartOverlay { proxy in
                             GeometryReader { geo in
@@ -72,44 +88,49 @@ struct WeeklyChartView: View {
                                     .contentShape(Rectangle())
                                     .onTapGesture { location in
                                         if let weekday: String = proxy.value(atX: location.x) {
-                                            selectedDay = weekData.first { $0.weekday == weekday }
+                                            withAnimation(.easeInOut(duration: 0.2)) {
+                                                selectedDay = weekData.first { $0.weekday == weekday }
+                                            }
                                         }
                                     }
                             }
                         }
                         .frame(height: 220)
                     }
-                    .padding()
-                    .cardStyle()
-                    .padding(.horizontal)
+                    .padding(20)
+                    .background(CaloTheme.surfacePrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .padding(.horizontal, 20)
 
                     // Selected day detail
                     if let selected = selectedDay {
                         DayDetailCard(day: selected, entries: entriesForDay(selected.date))
-                            .padding(.horizontal)
+                            .padding(.horizontal, 20)
                             .transition(.asymmetric(
                                 insertion: .move(edge: .bottom).combined(with: .opacity),
                                 removal: .opacity
                             ))
                     }
 
-                    // Weekly summary
-                    let totalWeek = weekData.reduce(0.0) { $0 + $1.calories }
-                    let avgDaily = totalWeek / 7
-
-                    VStack(spacing: 8) {
-                        HStack {
-                            SummaryItem(title: "Weekly Total", value: "\(totalWeek.wholeOrOne) cal")
-                            SummaryItem(title: "Daily Avg", value: "\(avgDaily.wholeOrOne) cal")
-                        }
+                    // Summary stats
+                    LazyVGrid(columns: [
+                        GridItem(.flexible()),
+                        GridItem(.flexible())
+                    ], spacing: 12) {
+                        StatCard(title: "Weekly Total", value: "\(totalWeek.wholeOrOne)", unit: "cal")
+                        StatCard(title: "Daily Average", value: "\(avgDaily.wholeOrOne)", unit: "cal")
+                        StatCard(title: "Highest Day", value: "\(highestDay.wholeOrOne)", unit: "cal")
+                        StatCard(title: "Days on Target", value: "\(daysOnTarget)", unit: "of 7")
                     }
-                    .padding()
-                    .cardStyle()
-                    .padding(.horizontal)
+                    .padding(.horizontal, 20)
                 }
-                .padding(.top)
+                .padding(.top, 8)
+                .padding(.bottom, 20)
             }
+            .background(Color.black)
             .navigationTitle("Weekly")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .animation(CaloTheme.springAnimation, value: selectedDay?.id)
         }
     }
@@ -122,6 +143,32 @@ struct WeeklyChartView: View {
     }
 }
 
+struct StatCard: View {
+    let title: String
+    let value: String
+    let unit: String
+
+    var body: some View {
+        VStack(spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 3) {
+                Text(value)
+                    .font(.system(.title3, design: .rounded, weight: .semibold))
+                    .foregroundStyle(.white)
+                Text(unit)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
+        .background(CaloTheme.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
 struct DayDetailCard: View {
     let day: DayCalories
     let entries: [FoodEntry]
@@ -130,6 +177,7 @@ struct DayDetailCard: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(day.date.formatted(date: .abbreviated, time: .omitted))
                 .font(.headline)
+                .foregroundStyle(.white)
 
             if entries.isEmpty {
                 Text("No meals logged")
@@ -147,12 +195,15 @@ struct DayDetailCard: View {
                     MacroColumn(label: "Fat", value: fat, color: .purple)
                 }
 
-                Divider()
+                Rectangle()
+                    .fill(CaloTheme.separator)
+                    .frame(height: 0.5)
 
                 ForEach(entries) { entry in
                     HStack {
                         Text(entry.foodName.capitalized)
                             .font(.subheadline)
+                            .foregroundStyle(.white)
                         Spacer()
                         Text("\(entry.calories.wholeOrOne) cal")
                             .font(.subheadline)
@@ -161,20 +212,23 @@ struct DayDetailCard: View {
                 }
             }
         }
-        .padding()
-        .cardStyle()
+        .padding(16)
+        .background(CaloTheme.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
-struct SummaryItem: View {
-    let title: String
-    let value: String
+struct MacroColumn: View {
+    let label: String
+    let value: Double
+    let color: Color
 
     var body: some View {
-        VStack(spacing: 4) {
-            Text(value)
-                .font(.system(.title3, design: .rounded, weight: .semibold))
-            Text(title)
+        VStack(spacing: 2) {
+            Text("\(value.wholeOrOne)g")
+                .font(.system(.headline, design: .rounded))
+                .foregroundStyle(color)
+            Text(label)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }

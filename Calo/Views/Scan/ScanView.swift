@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import AVFoundation
 
 struct ScanView: View {
     @Environment(\.modelContext) private var modelContext
@@ -18,133 +19,177 @@ struct ScanView: View {
     private var settings: UserSettings? { allSettings.first }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color(.systemBackground).ignoresSafeArea()
+        ZStack {
+            // Camera preview / captured image / black background
+            if let capturedImage {
+                Image(uiImage: capturedImage)
+                    .resizable()
+                    .scaledToFill()
+                    .ignoresSafeArea()
+                    .transition(.opacity)
+            } else {
+                Color.black
+                    .ignoresSafeArea()
 
-                VStack(spacing: 24) {
-                    Spacer()
+                // Camera placeholder
+                VStack(spacing: 16) {
+                    Image(systemName: "viewfinder")
+                        .font(.system(size: 72, weight: .ultraLight))
+                        .foregroundStyle(.white.opacity(0.2))
+                }
+            }
 
-                    // Preview area
-                    if let capturedImage {
-                        Image(uiImage: capturedImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 350)
-                            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                            .shadow(color: .black.opacity(0.15), radius: 10, y: 5)
-                            .transition(.scale.combined(with: .opacity))
-                    } else {
-                        VStack(spacing: 16) {
-                            Image(systemName: "fork.knife.circle.fill")
-                                .font(.system(size: 80))
-                                .foregroundStyle(CaloTheme.coral.opacity(0.3))
-                            Text("Take a photo of your food")
-                                .font(.title3)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(height: 350)
-                    }
+            // Dark gradient overlay at top and bottom for legibility
+            VStack(spacing: 0) {
+                LinearGradient(
+                    colors: [.black.opacity(0.7), .clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 120)
 
-                    // Text input
-                    TextField("Or describe your food...", text: $foodDescription)
-                        .textFieldStyle(.roundedBorder)
-                        .padding(.horizontal)
+                Spacer()
 
-                    // Analyzing state
-                    if isAnalyzing {
-                        VStack(spacing: 12) {
-                            ProgressView()
-                                .scaleEffect(1.2)
-                            Text("Analyzing with AI...")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                        .padding()
-                        .cardStyle()
-                    }
+                LinearGradient(
+                    colors: [.clear, .black.opacity(0.85)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 260)
+            }
+            .ignoresSafeArea()
 
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.subheadline)
-                            .foregroundStyle(.red)
-                            .padding(.horizontal)
-                    }
-
-                    Spacer()
-
-                    // Scan count
+            // Content overlay
+            VStack(spacing: 0) {
+                // Top bar: scan counter
+                HStack {
                     if let settings, !settings.isPremium {
-                        Text("\(settings.scansRemainingToday) free scans remaining today")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        Text("\(settings.scansRemainingToday) scans remaining")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.9))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(.ultraThinMaterial.opacity(0.6))
+                            .clipShape(Capsule())
                     }
+                    Spacer()
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
 
-                    // Action buttons
-                    HStack(spacing: 16) {
-                        // Camera button
-                        Button {
-                            showCamera = true
-                        } label: {
-                            Image(systemName: "camera.fill")
-                                .font(.title2)
-                                .foregroundStyle(.white)
-                                .frame(width: 70, height: 70)
-                                .background(CaloTheme.coral)
-                                .clipShape(Circle())
-                                .shadow(color: CaloTheme.coral.opacity(0.4), radius: 8, y: 4)
-                        }
+                Spacer()
 
-                        // Analyze text button
+                // Analyzing indicator
+                if isAnalyzing {
+                    VStack(spacing: 10) {
+                        ProgressView()
+                            .tint(.white)
+                            .scaleEffect(1.2)
+                        Text("Analyzing...")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.9))
+                    }
+                    .padding(20)
+                    .background(.ultraThinMaterial.opacity(0.4))
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                }
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.subheadline)
+                        .foregroundStyle(.red)
+                        .padding(.horizontal)
+                        .padding(.bottom, 8)
+                }
+
+                Spacer()
+
+                // Bottom controls
+                VStack(spacing: 16) {
+                    // Text field
+                    HStack(spacing: 10) {
+                        Image(systemName: "pencil")
+                            .foregroundStyle(.white.opacity(0.5))
+                        TextField("Or describe your food...", text: $foodDescription)
+                            .foregroundStyle(.white)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color.white.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .padding(.horizontal, 20)
+
+                    // Buttons row
+                    HStack(spacing: 20) {
+                        // Analyze text button (left)
                         if !foodDescription.isEmpty {
                             Button {
                                 analyzeFood()
                             } label: {
                                 Text("Analyze")
-                                    .font(.headline)
+                                    .font(.subheadline.weight(.semibold))
                                     .foregroundStyle(.white)
-                                    .frame(height: 50)
+                                    .frame(height: 44)
                                     .frame(maxWidth: .infinity)
-                                    .background(CaloTheme.coral)
+                                    .background(CaloTheme.coral.opacity(0.9))
                                     .clipShape(Capsule())
                             }
                             .transition(.scale.combined(with: .opacity))
                         }
+
+                        // Capture button (center)
+                        Button {
+                            showCamera = true
+                        } label: {
+                            ZStack {
+                                Circle()
+                                    .fill(CaloTheme.coral)
+                                    .frame(width: 72, height: 72)
+                                Circle()
+                                    .stroke(.white.opacity(0.3), lineWidth: 3)
+                                    .frame(width: 82, height: 82)
+                            }
+                        }
+
+                        // Spacer to keep capture button centered when analyze button is hidden
+                        if !foodDescription.isEmpty {
+                            Color.clear
+                                .frame(height: 44)
+                                .frame(maxWidth: .infinity)
+                        }
                     }
-                    .padding(.horizontal)
-                    .padding(.bottom, 8)
+                    .padding(.horizontal, 20)
                     .animation(CaloTheme.springAnimation, value: foodDescription.isEmpty)
                 }
+                .padding(.bottom, 16)
             }
-            .navigationTitle("Scan")
-            .navigationBarTitleDisplayMode(.inline)
-            .fullScreenCover(isPresented: $showCamera) {
-                CameraView { image in
-                    withAnimation(CaloTheme.springAnimation) {
-                        capturedImage = image
-                        imageData = image.compressed(maxKB: 500)
-                    }
-                    showCamera = false
-                    analyzeFood()
+        }
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraView { image in
+                withAnimation(CaloTheme.springAnimation) {
+                    capturedImage = image
+                    imageData = image.compressed(maxKB: 500)
                 }
-                .ignoresSafeArea()
+                showCamera = false
+                analyzeFood()
             }
-            .sheet(isPresented: $showResult) {
-                if let result = analysisResult {
-                    ResultView(
-                        result: result,
-                        image: capturedImage,
-                        isPremium: settings?.isPremium ?? false
-                    ) {
-                        addToLog(result: result)
-                        showResult = false
-                        resetState()
-                    }
+            .ignoresSafeArea()
+        }
+        .sheet(isPresented: $showResult) {
+            if let result = analysisResult {
+                ResultView(
+                    result: result,
+                    image: capturedImage,
+                    isPremium: settings?.isPremium ?? false
+                ) {
+                    addToLog(result: result)
+                    showResult = false
+                    resetState()
                 }
             }
-            .sheet(isPresented: $showPaywall) {
-                PaywallView()
-            }
+        }
+        .sheet(isPresented: $showPaywall) {
+            PaywallView()
         }
     }
 

@@ -19,12 +19,12 @@ struct ResultView: View {
                             .scaledToFill()
                             .frame(height: 250)
                             .clipped()
-                            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                            .padding(.horizontal)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .padding(.horizontal, 20)
                     }
 
-                    // Total summary card
-                    VStack(spacing: 16) {
+                    // Total summary
+                    VStack(spacing: 12) {
                         Text("\(result.totalCalories.wholeOrOne)")
                             .font(.system(size: 48, weight: .bold, design: .rounded))
                             .foregroundStyle(CaloTheme.coral)
@@ -38,14 +38,16 @@ struct ResultView: View {
                             MacroPill(label: "Fat", value: result.totalFat, color: .purple)
                         }
                     }
-                    .padding()
-                    .cardStyle()
-                    .padding(.horizontal)
+                    .padding(20)
+                    .frame(maxWidth: .infinity)
+                    .background(CaloTheme.surfacePrimary)
+                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .padding(.horizontal, 20)
 
                     // Individual foods
                     ForEach(result.foods) { food in
                         FoodResultCard(food: food)
-                            .padding(.horizontal)
+                            .padding(.horizontal, 20)
                     }
 
                     // Share button
@@ -73,13 +75,15 @@ struct ResultView: View {
                             .background(CaloTheme.coral)
                             .clipShape(Capsule())
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 20)
                     .padding(.bottom, 20)
                 }
                 .padding(.top)
             }
+            .background(Color.black)
             .navigationTitle("Result")
             .navigationBarTitleDisplayMode(.inline)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
@@ -123,6 +127,7 @@ struct FoodResultCard: View {
             HStack {
                 Text(food.name.capitalized)
                     .font(.headline)
+                    .foregroundStyle(.white)
 
                 Spacer()
 
@@ -158,7 +163,7 @@ struct FoodResultCard: View {
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
                         Capsule()
-                            .fill(Color(.tertiarySystemFill))
+                            .fill(Color.white.opacity(0.08))
                         Capsule()
                             .fill(confidenceColor)
                             .frame(width: geo.size.width * food.confidence)
@@ -171,8 +176,9 @@ struct FoodResultCard: View {
                     .foregroundStyle(.tertiary)
             }
         }
-        .padding()
-        .cardStyle()
+        .padding(16)
+        .background(CaloTheme.surfacePrimary)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 
     private var confidenceColor: Color {

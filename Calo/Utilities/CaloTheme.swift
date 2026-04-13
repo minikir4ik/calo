@@ -1,11 +1,11 @@
 import SwiftUI
 
 enum CaloTheme {
-    static let coral = Color("CoralColor")
-
-    static let cardBackground = Color(.secondarySystemBackground)
-    static let cardRadius: CGFloat = 16
-    static let cardShadow: CGFloat = 4
+    static let coral = Color(red: 226/255, green: 109/255, blue: 90/255)
+    static let background = Color.black
+    static let surfacePrimary = Color(white: 0.08)
+    static let surfaceSecondary = Color(white: 0.12)
+    static let separator = Color(white: 0.18)
 
     static let springAnimation = Animation.spring(duration: 0.4, bounce: 0.2)
 
@@ -17,20 +17,5 @@ enum CaloTheme {
         case "calories": return coral
         default: return .gray
         }
-    }
-}
-
-struct CardStyle: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .background(CaloTheme.cardBackground)
-            .clipShape(RoundedRectangle(cornerRadius: CaloTheme.cardRadius, style: .continuous))
-            .shadow(color: .black.opacity(0.08), radius: CaloTheme.cardShadow, y: 2)
-    }
-}
-
-extension View {
-    func cardStyle() -> some View {
-        modifier(CardStyle())
     }
 }
