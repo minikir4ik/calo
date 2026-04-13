@@ -27,32 +27,32 @@ struct ScanView: View {
                         .foregroundStyle(.white.opacity(0.8))
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.1))
-                        .clipShape(Capsule())
+                        .background(Color.white.opacity(0.1), in: Capsule())
                 }
                 Spacer()
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
 
-            // Camera area
-            ZStack {
-                if let capturedImage {
-                    Image(uiImage: capturedImage)
-                        .resizable()
-                        .scaledToFill()
-                        .clipped()
-                } else {
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color(white: 0.1))
-                        .allowsHitTesting(false)
-                    Image(systemName: "viewfinder")
-                        .font(.system(size: 60, weight: .ultraLight))
-                        .foregroundStyle(.white.opacity(0.15))
-                        .allowsHitTesting(false)
+            // Camera area — explicit flexible frame
+            GeometryReader { _ in
+                ZStack {
+                    if let capturedImage {
+                        Image(uiImage: capturedImage)
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        Color(white: 0.1)
+                        Image(systemName: "viewfinder")
+                            .font(.system(size: 60, weight: .ultraLight))
+                            .foregroundStyle(.white.opacity(0.15))
+                    }
                 }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .allowsHitTesting(false)
             .padding(.horizontal, 16)
             .padding(.top, 12)
 
@@ -61,8 +61,7 @@ struct ScanView: View {
             // Analyzing state
             if isAnalyzing {
                 HStack(spacing: 10) {
-                    ProgressView()
-                        .tint(.white)
+                    ProgressView().tint(.white)
                     Text("Analyzing...")
                         .font(.subheadline)
                         .foregroundStyle(CaloTheme.subtleText)
@@ -78,12 +77,11 @@ struct ScanView: View {
                     .padding(.bottom, 4)
             }
 
-            // Text input
+            // Text input — no clipShape, use background with shape instead
             TextField("Or describe your food...", text: $foodDescription)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(CaloTheme.cardBackground)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
                 .foregroundStyle(.white)
                 .padding(.horizontal, 16)
 
@@ -92,24 +90,19 @@ struct ScanView: View {
             // Bottom buttons
             HStack(spacing: 16) {
                 if !foodDescription.isEmpty {
-                    Button {
-                        analyzeFood()
-                    } label: {
+                    Button(action: { analyzeFood() }) {
                         Text("Analyze")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.white)
                             .frame(height: 44)
                             .frame(maxWidth: .infinity)
-                            .background(CaloTheme.coral)
-                            .clipShape(Capsule())
-                            .contentShape(Capsule())
+                            .background(CaloTheme.coral, in: Capsule())
                     }
+                    .buttonStyle(.plain)
                     .transition(.scale.combined(with: .opacity))
                 }
 
-                Button {
-                    showCamera = true
-                } label: {
+                Button(action: { showCamera = true }) {
                     ZStack {
                         Circle()
                             .fill(CaloTheme.coral)
@@ -118,14 +111,13 @@ struct ScanView: View {
                             .stroke(Color.white.opacity(0.25), lineWidth: 3)
                             .frame(width: 80, height: 80)
                     }
-                    .contentShape(Circle())
                 }
+                .buttonStyle(.plain)
 
                 if !foodDescription.isEmpty {
-                    Color.clear
+                    Spacer()
                         .frame(height: 44)
                         .frame(maxWidth: .infinity)
-                        .allowsHitTesting(false)
                 }
             }
             .padding(.horizontal, 16)
@@ -165,16 +157,13 @@ struct ScanView: View {
 
     private func analyzeFood() {
         guard let settings else { return }
-
         if !settings.canScan {
             showPaywall = true
             return
         }
-
         let description = foodDescription.isEmpty ? "Identify this food" : foodDescription
         isAnalyzing = true
         errorMessage = nil
-
         Task {
             do {
                 let result = try await FoodAnalysisService.analyze(

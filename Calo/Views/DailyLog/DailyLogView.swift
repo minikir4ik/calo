@@ -29,104 +29,101 @@ struct DailyLogView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                // Date picker section
-                Section {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(last7Days, id: \.self) { date in
+            VStack(spacing: 0) {
+                // Date chips — outside List for reliable tapping
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(last7Days, id: \.self) { date in
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedDate = date
+                                }
+                            } label: {
                                 DateChip(
                                     date: date,
                                     isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate)
                                 )
-                                .onTapGesture {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        selectedDate = date
-                                    }
-                                }
                             }
+                            .buttonStyle(.plain)
                         }
-                        .padding(.vertical, 4)
                     }
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16))
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
                 }
 
-                // Summary section
-                Section {
-                    HStack(spacing: 0) {
-                        VStack(spacing: 2) {
-                            Text(totalCalories.wholeOrOne)
-                                .font(.system(size: 24, weight: .bold, design: .rounded))
-                                .foregroundStyle(CaloTheme.coral)
-                            Text("cal")
-                                .font(.caption2)
-                                .foregroundStyle(CaloTheme.subtleText)
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
-
-                        VStack(spacing: 2) {
-                            Text("\(totalProtein.wholeOrOne)g")
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.blue)
-                            Text("protein")
-                                .font(.caption2)
-                                .foregroundStyle(CaloTheme.subtleText)
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
-
-                        VStack(spacing: 2) {
-                            Text("\(totalCarbs.wholeOrOne)g")
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.orange)
-                            Text("carbs")
-                                .font(.caption2)
-                                .foregroundStyle(CaloTheme.subtleText)
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
-
-                        VStack(spacing: 2) {
-                            Text("\(totalFat.wholeOrOne)g")
-                                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.purple)
-                            Text("fat")
-                                .font(.caption2)
-                                .foregroundStyle(CaloTheme.subtleText)
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
-                }
-
-                // Entries section
-                Section {
-                    if entriesForDate.isEmpty {
-                        Text("No entries today")
-                            .font(.subheadline)
+                // Summary row
+                HStack(spacing: 0) {
+                    VStack(spacing: 2) {
+                        Text(totalCalories.wholeOrOne)
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(CaloTheme.coral)
+                        Text("cal")
+                            .font(.caption2)
                             .foregroundStyle(CaloTheme.subtleText)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.top, 30)
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                    } else {
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
+
+                    VStack(spacing: 2) {
+                        Text("\(totalProtein.wholeOrOne)g")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.blue)
+                        Text("protein")
+                            .font(.caption2)
+                            .foregroundStyle(CaloTheme.subtleText)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
+
+                    VStack(spacing: 2) {
+                        Text("\(totalCarbs.wholeOrOne)g")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.orange)
+                        Text("carbs")
+                            .font(.caption2)
+                            .foregroundStyle(CaloTheme.subtleText)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
+
+                    VStack(spacing: 2) {
+                        Text("\(totalFat.wholeOrOne)g")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.purple)
+                        Text("fat")
+                            .font(.caption2)
+                            .foregroundStyle(CaloTheme.subtleText)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+
+                Rectangle().fill(CaloTheme.separator).frame(height: 0.5)
+
+                // Food entries — plain List fills remaining space
+                if entriesForDate.isEmpty {
+                    Spacer()
+                    Text("No entries today")
+                        .font(.subheadline)
+                        .foregroundStyle(CaloTheme.subtleText)
+                    Spacer()
+                } else {
+                    List {
                         ForEach(entriesForDate.sorted(by: { $0.timestamp > $1.timestamp })) { entry in
                             FoodEntryRow(entry: entry)
                                 .listRowBackground(Color.clear)
-                                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                                .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                         }
                         .onDelete(perform: deleteEntries)
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
                 }
             }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
             .background(Color.black.ignoresSafeArea())
             .navigationTitle("Log")
             .navigationBarTitleDisplayMode(.large)
@@ -172,9 +169,7 @@ struct DateChip: View {
                 .foregroundStyle(isSelected ? .white : .primary)
         }
         .frame(width: 44, height: 56)
-        .background(isSelected ? CaloTheme.coral : CaloTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-        .contentShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(isSelected ? CaloTheme.coral : CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(isToday && !isSelected ? CaloTheme.coral.opacity(0.5) : .clear, lineWidth: 1)

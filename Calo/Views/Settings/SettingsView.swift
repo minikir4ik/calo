@@ -10,39 +10,38 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Account
                 Section("Account") {
-                    HStack {
-                        Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
-                            .foregroundStyle(settings?.isPremium == true ? .yellow : CaloTheme.subtleText)
-                            .frame(width: 24)
-
-                        VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
+                                .foregroundStyle(settings?.isPremium == true ? .yellow : CaloTheme.subtleText)
+                                .frame(width: 24)
                             Text(settings?.isPremium == true ? "Premium" : "Free Plan")
                                 .font(.body.weight(.medium))
-                            if let settings, !settings.isPremium {
-                                Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans) scans today")
-                                    .font(.caption)
-                                    .foregroundStyle(CaloTheme.subtleText)
-                            }
+                            Spacer()
                         }
-
-                        Spacer()
-
-                        if settings?.isPremium != true {
-                            Button("Upgrade") { showPaywall = true }
-                                .font(.subheadline.bold())
-                                .foregroundStyle(.white)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 6)
-                                .background(CaloTheme.coral)
-                                .clipShape(Capsule())
+                        if let settings, !settings.isPremium {
+                            Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans) scans today")
+                                .font(.caption)
+                                .foregroundStyle(CaloTheme.subtleText)
                         }
                     }
                     .listRowBackground(CaloTheme.cardBackground)
+
+                    if settings?.isPremium != true {
+                        Button(action: { showPaywall = true }) {
+                            Text("Upgrade to Premium")
+                                .font(.subheadline.bold())
+                                .foregroundStyle(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 10)
+                                .background(CaloTheme.coral, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                        .listRowBackground(CaloTheme.cardBackground)
+                    }
                 }
 
-                // Goals
                 Section("Daily Goals") {
                     if let settings {
                         GoalRow(label: "Calories", value: Binding(
@@ -67,7 +66,6 @@ struct SettingsView: View {
                     }
                 }
 
-                // Appearance
                 Section("Appearance") {
                     HStack {
                         Text("Theme")
@@ -78,7 +76,6 @@ struct SettingsView: View {
                     .listRowBackground(CaloTheme.cardBackground)
                 }
 
-                // About
                 Section("About") {
                     HStack {
                         Text("Version")
@@ -86,32 +83,33 @@ struct SettingsView: View {
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")
                             .foregroundStyle(CaloTheme.subtleText)
                     }
+                    .listRowBackground(CaloTheme.cardBackground)
+
                     HStack {
                         Text("Build")
                         Spacer()
                         Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
                             .foregroundStyle(CaloTheme.subtleText)
                     }
+                    .listRowBackground(CaloTheme.cardBackground)
+
                     Link(destination: URL(string: "https://minilabs.dev/calo/privacy")!) {
                         HStack {
-                            Text("Privacy Policy")
-                                .foregroundStyle(.white)
+                            Text("Privacy Policy").foregroundStyle(.white)
                             Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .font(.caption)
-                                .foregroundStyle(CaloTheme.subtleText)
+                            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(CaloTheme.subtleText)
                         }
                     }
+                    .listRowBackground(CaloTheme.cardBackground)
+
                     Link(destination: URL(string: "https://minilabs.dev/calo/terms")!) {
                         HStack {
-                            Text("Terms of Service")
-                                .foregroundStyle(.white)
+                            Text("Terms of Service").foregroundStyle(.white)
                             Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .font(.caption)
-                                .foregroundStyle(CaloTheme.subtleText)
+                            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(CaloTheme.subtleText)
                         }
                     }
+                    .listRowBackground(CaloTheme.cardBackground)
                 }
             }
             .listStyle(.insetGrouped)
