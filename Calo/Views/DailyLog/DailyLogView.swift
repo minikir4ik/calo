@@ -29,167 +29,112 @@ struct DailyLogView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 0) {
-                    // Horizontal date picker
-                    ScrollViewReader { proxy in
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                ForEach(last7Days, id: \.self) { date in
-                                    DateChip(
-                                        date: date,
-                                        isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate)
-                                    )
-                                    .id(date)
-                                    .onTapGesture {
-                                        withAnimation(.easeInOut(duration: 0.2)) {
-                                            selectedDate = date
-                                        }
-                                    }
+            VStack(spacing: 0) {
+                // Horizontal date picker
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 8) {
+                        ForEach(last7Days, id: \.self) { date in
+                            DateChip(
+                                date: date,
+                                isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate)
+                            )
+                            .onTapGesture {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    selectedDate = date
                                 }
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 12)
-                        }
-                        .onAppear {
-                            if let today = last7Days.last {
-                                proxy.scrollTo(today, anchor: .trailing)
-                            }
                         }
                     }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                }
 
-                    // Summary row
-                    HStack(spacing: 0) {
-                        // Calories
-                        VStack(spacing: 2) {
-                            Text(totalCalories.wholeOrOne)
-                                .font(.system(size: 28, weight: .bold, design: .rounded))
-                                .foregroundStyle(CaloTheme.coral)
-                            Text("cal")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        Divider()
-                            .frame(height: 32)
-
-                        // Protein
-                        VStack(spacing: 2) {
-                            Text("\(totalProtein.wholeOrOne)g")
-                                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.blue)
-                            Text("protein")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        Divider()
-                            .frame(height: 32)
-
-                        // Carbs
-                        VStack(spacing: 2) {
-                            Text("\(totalCarbs.wholeOrOne)g")
-                                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.orange)
-                            Text("carbs")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity)
-
-                        Divider()
-                            .frame(height: 32)
-
-                        // Fat
-                        VStack(spacing: 2) {
-                            Text("\(totalFat.wholeOrOne)g")
-                                .font(.system(size: 17, weight: .semibold, design: .rounded))
-                                .foregroundStyle(.purple)
-                            Text("fat")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(maxWidth: .infinity)
+                // Summary row
+                HStack(spacing: 0) {
+                    VStack(spacing: 2) {
+                        Text(totalCalories.wholeOrOne)
+                            .font(.system(size: 24, weight: .bold, design: .rounded))
+                            .foregroundStyle(CaloTheme.coral)
+                        Text("cal")
+                            .font(.caption2)
+                            .foregroundStyle(CaloTheme.subtleText)
                     }
-                    .padding(.vertical, 16)
-                    .padding(.horizontal, 20)
-                    .background(CaloTheme.surfacePrimary)
+                    .frame(maxWidth: .infinity)
 
-                    // Goal progress
-                    if let settings {
-                        let progress = min(totalCalories / Double(settings.dailyCalorieGoal), 1.0)
-                        VStack(spacing: 6) {
-                            GeometryReader { geo in
-                                ZStack(alignment: .leading) {
-                                    Capsule()
-                                        .fill(Color.white.opacity(0.08))
-                                    Capsule()
-                                        .fill(CaloTheme.coral)
-                                        .frame(width: geo.size.width * progress)
-                                }
-                            }
-                            .frame(height: 4)
+                    Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
 
-                            HStack {
-                                Text("\(totalCalories.wholeOrOne) / \(settings.dailyCalorieGoal) cal goal")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                Spacer()
-                                Text("\(Int(progress * 100))%")
-                                    .font(.caption.weight(.medium))
-                                    .foregroundStyle(CaloTheme.coral)
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
+                    VStack(spacing: 2) {
+                        Text("\(totalProtein.wholeOrOne)g")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.blue)
+                        Text("protein")
+                            .font(.caption2)
+                            .foregroundStyle(CaloTheme.subtleText)
                     }
+                    .frame(maxWidth: .infinity)
 
-                    // Separator
-                    Rectangle()
-                        .fill(CaloTheme.separator)
-                        .frame(height: 0.5)
+                    Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
 
-                    // Food entries
+                    VStack(spacing: 2) {
+                        Text("\(totalCarbs.wholeOrOne)g")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.orange)
+                        Text("carbs")
+                            .font(.caption2)
+                            .foregroundStyle(CaloTheme.subtleText)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    Rectangle().fill(CaloTheme.separator).frame(width: 0.5, height: 28)
+
+                    VStack(spacing: 2) {
+                        Text("\(totalFat.wholeOrOne)g")
+                            .font(.system(size: 15, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.purple)
+                        Text("fat")
+                            .font(.caption2)
+                            .foregroundStyle(CaloTheme.subtleText)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 16)
+
+                Rectangle().fill(CaloTheme.separator).frame(height: 0.5)
+
+                // Food entries list
+                List {
                     if entriesForDate.isEmpty {
-                        VStack(spacing: 8) {
-                            Text("No meals logged")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                            Text("Scan food to start tracking")
-                                .font(.caption)
-                                .foregroundStyle(.tertiary)
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(.top, 60)
+                        Text("No entries today")
+                            .font(.subheadline)
+                            .foregroundStyle(CaloTheme.subtleText)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding(.top, 40)
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
                     } else {
-                        LazyVStack(spacing: 0) {
-                            ForEach(entriesForDate.sorted(by: { $0.timestamp > $1.timestamp })) { entry in
-                                FoodEntryRow(entry: entry)
-                                    .padding(.horizontal, 20)
-                                    .padding(.vertical, 12)
-                                    .swipeActions(edge: .trailing) {
-                                        Button(role: .destructive) {
-                                            modelContext.delete(entry)
-                                        } label: {
-                                            Label("Delete", systemImage: "trash")
-                                        }
-                                    }
-
-                                Rectangle()
-                                    .fill(CaloTheme.separator)
-                                    .frame(height: 0.5)
-                                    .padding(.leading, 20)
-                            }
+                        ForEach(entriesForDate.sorted(by: { $0.timestamp > $1.timestamp })) { entry in
+                            FoodEntryRow(entry: entry)
+                                .listRowBackground(Color.clear)
+                                .listRowInsets(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                         }
+                        .onDelete(perform: deleteEntries)
                     }
                 }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
             }
-            .background(Color.black)
-            .navigationTitle("Daily Log")
+            .background(Color.black.ignoresSafeArea())
+            .navigationTitle("Log")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
+        }
+    }
+
+    private func deleteEntries(at offsets: IndexSet) {
+        let sorted = entriesForDate.sorted(by: { $0.timestamp > $1.timestamp })
+        for index in offsets {
+            modelContext.delete(sorted[index])
         }
     }
 }
@@ -218,13 +163,13 @@ struct DateChip: View {
         VStack(spacing: 4) {
             Text(dayName)
                 .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(isSelected ? .white : .secondary)
+                .foregroundStyle(isSelected ? .white : CaloTheme.subtleText)
             Text(dayNumber)
                 .font(.system(size: 17, weight: isSelected ? .bold : .medium, design: .rounded))
                 .foregroundStyle(isSelected ? .white : .primary)
         }
         .frame(width: 44, height: 56)
-        .background(isSelected ? CaloTheme.coral : CaloTheme.surfacePrimary)
+        .background(isSelected ? CaloTheme.coral : CaloTheme.cardBackground)
         .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay(
             RoundedRectangle(cornerRadius: 12, style: .continuous)
@@ -238,26 +183,22 @@ struct FoodEntryRow: View {
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
                     Text(entry.foodName.capitalized)
                         .font(.body.weight(.medium))
                         .foregroundStyle(.white)
-
                     if entry.verified {
                         Image(systemName: "checkmark.seal.fill")
                             .font(.caption2)
                             .foregroundStyle(.green)
                     }
                 }
-
                 Text(entry.timeString)
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(CaloTheme.subtleText)
             }
-
             Spacer()
-
             Text("\(entry.calories.wholeOrOne) cal")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(CaloTheme.coral)

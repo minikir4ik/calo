@@ -12,45 +12,44 @@ struct ResultView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Food image
                     if let image {
                         Image(uiImage: image)
                             .resizable()
                             .scaledToFill()
-                            .frame(height: 250)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 240)
                             .clipped()
-                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                            .padding(.horizontal, 20)
                     }
 
                     // Total summary
-                    VStack(spacing: 12) {
+                    VStack(spacing: 10) {
                         Text("\(result.totalCalories.wholeOrOne)")
-                            .font(.system(size: 48, weight: .bold, design: .rounded))
+                            .font(.system(size: 44, weight: .bold, design: .rounded))
                             .foregroundStyle(CaloTheme.coral)
                         Text("calories")
                             .font(.subheadline)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(CaloTheme.subtleText)
 
                         HStack(spacing: 24) {
                             MacroPill(label: "Protein", value: result.totalProtein, color: .blue)
                             MacroPill(label: "Carbs", value: result.totalCarbs, color: .orange)
                             MacroPill(label: "Fat", value: result.totalFat, color: .purple)
                         }
+                        .padding(.top, 4)
                     }
-                    .padding(20)
-                    .frame(maxWidth: .infinity)
-                    .background(CaloTheme.surfacePrimary)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
+
+                    Rectangle().fill(CaloTheme.separator).frame(height: 0.5).padding(.horizontal, 16)
 
                     // Individual foods
-                    ForEach(result.foods) { food in
-                        FoodResultCard(food: food)
-                            .padding(.horizontal, 20)
+                    VStack(spacing: 12) {
+                        ForEach(result.foods) { food in
+                            FoodResultCard(food: food)
+                        }
                     }
+                    .padding(.horizontal, 16)
 
-                    // Share button
+                    // Share
                     ShareLink(
                         item: shareText,
                         subject: Text("My meal from Calo"),
@@ -61,32 +60,31 @@ struct ResultView: View {
                             systemImage: "square.and.arrow.up"
                         )
                         .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(CaloTheme.subtleText)
                     }
-                    .padding(.top, 4)
 
-                    // Add to Log button
+                    // Add to Log
                     Button(action: onAddToLog) {
                         Text("Add to Log")
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 54)
+                            .frame(height: 52)
                             .background(CaloTheme.coral)
                             .clipShape(Capsule())
                     }
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 16)
                     .padding(.bottom, 20)
                 }
-                .padding(.top)
             }
-            .background(Color.black)
+            .background(Color.black.ignoresSafeArea())
             .navigationTitle("Result")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
+                        .foregroundStyle(CaloTheme.coral)
                 }
             }
         }
@@ -114,7 +112,7 @@ struct MacroPill: View {
                 .foregroundStyle(color)
             Text(label)
                 .font(.caption)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(CaloTheme.subtleText)
         }
     }
 }
@@ -128,15 +126,13 @@ struct FoodResultCard: View {
                 Text(food.name.capitalized)
                     .font(.headline)
                     .foregroundStyle(.white)
-
                 Spacer()
-
                 if food.verified {
-                    Label("USDA Verified", systemImage: "checkmark.seal.fill")
+                    Label("USDA", systemImage: "checkmark.seal.fill")
                         .font(.caption2)
                         .foregroundStyle(.green)
                 } else {
-                    Label("AI Estimate", systemImage: "sparkles")
+                    Label("AI", systemImage: "sparkles")
                         .font(.caption2)
                         .foregroundStyle(.orange)
                 }
@@ -145,27 +141,24 @@ struct FoodResultCard: View {
             HStack {
                 Text("\(food.grams.wholeOrOne)g")
                     .font(.subheadline)
-                    .foregroundStyle(.secondary)
-
+                    .foregroundStyle(CaloTheme.subtleText)
                 Spacer()
-
                 Text("\(food.calories.wholeOrOne) cal")
                     .font(.subheadline.bold())
                     .foregroundStyle(CaloTheme.coral)
             }
 
-            // Confidence bar
+            // Confidence
             HStack(spacing: 4) {
                 Text("Confidence")
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(CaloTheme.subtleText)
 
                 GeometryReader { geo in
                     ZStack(alignment: .leading) {
+                        Capsule().fill(Color.white.opacity(0.08))
                         Capsule()
-                            .fill(Color.white.opacity(0.08))
-                        Capsule()
-                            .fill(confidenceColor)
+                            .fill(food.confidence > 0.8 ? .green : food.confidence > 0.5 ? .orange : .red)
                             .frame(width: geo.size.width * food.confidence)
                     }
                 }
@@ -173,15 +166,11 @@ struct FoodResultCard: View {
 
                 Text("\(Int(food.confidence * 100))%")
                     .font(.caption2)
-                    .foregroundStyle(.tertiary)
+                    .foregroundStyle(CaloTheme.subtleText)
             }
         }
-        .padding(16)
-        .background(CaloTheme.surfacePrimary)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-    }
-
-    private var confidenceColor: Color {
-        food.confidence > 0.8 ? .green : food.confidence > 0.5 ? .orange : .red
+        .padding(14)
+        .background(CaloTheme.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }

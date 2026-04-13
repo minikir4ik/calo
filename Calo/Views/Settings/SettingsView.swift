@@ -11,24 +11,19 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 // Account
-                Section {
+                Section("Account") {
                     HStack {
-                        ZStack {
-                            Circle()
-                                .fill(settings?.isPremium == true ? Color.yellow.opacity(0.15) : CaloTheme.surfaceSecondary)
-                                .frame(width: 36, height: 36)
-                            Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
-                                .font(.system(size: 16))
-                                .foregroundStyle(settings?.isPremium == true ? .yellow : .secondary)
-                        }
+                        Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
+                            .foregroundStyle(settings?.isPremium == true ? .yellow : CaloTheme.subtleText)
+                            .frame(width: 24)
 
                         VStack(alignment: .leading, spacing: 2) {
                             Text(settings?.isPremium == true ? "Premium" : "Free Plan")
                                 .font(.body.weight(.medium))
                             if let settings, !settings.isPremium {
-                                Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans) scans used today")
+                                Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans) scans today")
                                     .font(.caption)
-                                    .foregroundStyle(.secondary)
+                                    .foregroundStyle(CaloTheme.subtleText)
                             }
                         }
 
@@ -44,13 +39,11 @@ struct SettingsView: View {
                                 .clipShape(Capsule())
                         }
                     }
-                    .listRowBackground(CaloTheme.surfacePrimary)
-                } header: {
-                    Text("Account")
+                    .listRowBackground(CaloTheme.cardBackground)
                 }
 
                 // Goals
-                Section {
+                Section("Daily Goals") {
                     if let settings {
                         GoalRow(label: "Calories", value: Binding(
                             get: { settings.dailyCalorieGoal },
@@ -72,12 +65,33 @@ struct SettingsView: View {
                             set: { settings.dailyFatGoal = $0 }
                         ), unit: "g", color: .purple)
                     }
-                } header: {
-                    Text("Daily Goals")
                 }
 
-                // Legal
-                Section {
+                // Appearance
+                Section("Appearance") {
+                    HStack {
+                        Text("Theme")
+                        Spacer()
+                        Text("Dark")
+                            .foregroundStyle(CaloTheme.subtleText)
+                    }
+                    .listRowBackground(CaloTheme.cardBackground)
+                }
+
+                // About
+                Section("About") {
+                    HStack {
+                        Text("Version")
+                        Spacer()
+                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")
+                            .foregroundStyle(CaloTheme.subtleText)
+                    }
+                    HStack {
+                        Text("Build")
+                        Spacer()
+                        Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
+                            .foregroundStyle(CaloTheme.subtleText)
+                    }
                     Link(destination: URL(string: "https://minilabs.dev/calo/privacy")!) {
                         HStack {
                             Text("Privacy Policy")
@@ -85,7 +99,7 @@ struct SettingsView: View {
                             Spacer()
                             Image(systemName: "arrow.up.right")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(CaloTheme.subtleText)
                         }
                     }
                     Link(destination: URL(string: "https://minilabs.dev/calo/terms")!) {
@@ -95,34 +109,14 @@ struct SettingsView: View {
                             Spacer()
                             Image(systemName: "arrow.up.right")
                                 .font(.caption)
-                                .foregroundStyle(.secondary)
+                                .foregroundStyle(CaloTheme.subtleText)
                         }
                     }
-                } header: {
-                    Text("Legal")
-                }
-
-                // About
-                Section {
-                    HStack {
-                        Text("Version")
-                        Spacer()
-                        Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")
-                            .foregroundStyle(.secondary)
-                    }
-                    HStack {
-                        Text("Build")
-                        Spacer()
-                        Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
-                            .foregroundStyle(.secondary)
-                    }
-                } header: {
-                    Text("About")
                 }
             }
-            .scrollContentBackground(.hidden)
-            .background(Color.black)
             .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            .background(Color.black.ignoresSafeArea())
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
@@ -152,7 +146,7 @@ struct GoalRow: View {
                 .keyboardType(.numberPad)
                 .multilineTextAlignment(.trailing)
                 .frame(width: 80)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(CaloTheme.subtleText)
                 .onAppear { text = "\(value)" }
                 .onChange(of: text) { _, newValue in
                     if let num = Int(newValue) {
@@ -160,8 +154,9 @@ struct GoalRow: View {
                     }
                 }
             Text(unit)
-                .foregroundStyle(.tertiary)
+                .foregroundStyle(CaloTheme.subtleText)
                 .frame(width: 30)
         }
+        .listRowBackground(CaloTheme.cardBackground)
     }
 }
