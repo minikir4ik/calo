@@ -37,7 +37,6 @@ struct WeeklyChartView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    // Chart
                     Chart(weekData) { day in
                         BarMark(
                             x: .value("Day", day.weekday),
@@ -72,8 +71,7 @@ struct WeeklyChartView: View {
                     }
                     .chartOverlay { proxy in
                         GeometryReader { _ in
-                            Rectangle()
-                                .fill(Color.clear)
+                            Color.clear
                                 .contentShape(Rectangle())
                                 .onTapGesture { location in
                                     if let weekday: String = proxy.value(atX: location.x) {
@@ -88,7 +86,6 @@ struct WeeklyChartView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
 
-                    // Selected day detail
                     if let selected = selectedDay {
                         VStack(alignment: .leading, spacing: 8) {
                             Text(selected.date.formatted(date: .abbreviated, time: .omitted))
@@ -130,7 +127,6 @@ struct WeeklyChartView: View {
                         .transition(.opacity)
                     }
 
-                    // Summary stats
                     HStack(spacing: 12) {
                         StatBlock(title: "Weekly Total", value: "\(totalWeek.wholeOrOne) cal")
                         StatBlock(title: "Daily Avg", value: "\(avgDaily.wholeOrOne) cal")
