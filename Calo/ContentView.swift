@@ -17,7 +17,6 @@ struct ContentView: View {
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
         }
         .tint(CaloTheme.coral)
-        .preferredColorScheme(.dark)
         .onAppear { ensureSettings() }
     }
 

@@ -9,36 +9,28 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
+            Form {
                 Section("Account") {
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
-                                .foregroundStyle(settings?.isPremium == true ? .yellow : CaloTheme.subtleText)
-                                .frame(width: 24)
+                    HStack {
+                        Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
+                            .foregroundStyle(settings?.isPremium == true ? .yellow : .secondary)
+                            .frame(width: 24)
+                        VStack(alignment: .leading, spacing: 2) {
                             Text(settings?.isPremium == true ? "Premium" : "Free Plan")
                                 .font(.body.weight(.medium))
-                            Spacer()
-                        }
-                        if let settings, !settings.isPremium {
-                            Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans) scans today")
-                                .font(.caption)
-                                .foregroundStyle(CaloTheme.subtleText)
+                            if let settings, !settings.isPremium {
+                                Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans) scans today")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
-                    .listRowBackground(CaloTheme.cardBackground)
 
                     if settings?.isPremium != true {
-                        Button(action: { showPaywall = true }) {
-                            Text("Upgrade to Premium")
-                                .font(.subheadline.bold())
-                                .foregroundStyle(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(CaloTheme.coral, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        Button("Upgrade to Premium") {
+                            showPaywall = true
                         }
-                        .buttonStyle(.plain)
-                        .listRowBackground(CaloTheme.cardBackground)
+                        .foregroundStyle(CaloTheme.coral)
                     }
                 }
 
@@ -66,58 +58,19 @@ struct SettingsView: View {
                     }
                 }
 
-                Section("Appearance") {
-                    HStack {
-                        Text("Theme")
-                        Spacer()
-                        Text("Dark")
-                            .foregroundStyle(CaloTheme.subtleText)
-                    }
-                    .listRowBackground(CaloTheme.cardBackground)
-                }
-
                 Section("About") {
-                    HStack {
-                        Text("Version")
-                        Spacer()
+                    LabeledContent("Version") {
                         Text(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0")
-                            .foregroundStyle(CaloTheme.subtleText)
                     }
-                    .listRowBackground(CaloTheme.cardBackground)
-
-                    HStack {
-                        Text("Build")
-                        Spacer()
+                    LabeledContent("Build") {
                         Text(Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1")
-                            .foregroundStyle(CaloTheme.subtleText)
                     }
-                    .listRowBackground(CaloTheme.cardBackground)
-
-                    Link(destination: URL(string: "https://minilabs.dev/calo/privacy")!) {
-                        HStack {
-                            Text("Privacy Policy").foregroundStyle(.white)
-                            Spacer()
-                            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(CaloTheme.subtleText)
-                        }
-                    }
-                    .listRowBackground(CaloTheme.cardBackground)
-
-                    Link(destination: URL(string: "https://minilabs.dev/calo/terms")!) {
-                        HStack {
-                            Text("Terms of Service").foregroundStyle(.white)
-                            Spacer()
-                            Image(systemName: "arrow.up.right").font(.caption).foregroundStyle(CaloTheme.subtleText)
-                        }
-                    }
-                    .listRowBackground(CaloTheme.cardBackground)
+                    Link("Privacy Policy", destination: URL(string: "https://minilabs.dev/calo/privacy")!)
+                    Link("Terms of Service", destination: URL(string: "https://minilabs.dev/calo/terms")!)
                 }
             }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
-            .background(Color.black.ignoresSafeArea())
             .navigationTitle("Settings")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .preferredColorScheme(.dark)
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
             }
@@ -144,7 +97,6 @@ struct GoalRow: View {
                 .keyboardType(.numberPad)
                 .multilineTextAlignment(.trailing)
                 .frame(width: 80)
-                .foregroundStyle(CaloTheme.subtleText)
                 .onAppear { text = "\(value)" }
                 .onChange(of: text) { _, newValue in
                     if let num = Int(newValue) {
@@ -152,9 +104,8 @@ struct GoalRow: View {
                     }
                 }
             Text(unit)
-                .foregroundStyle(CaloTheme.subtleText)
+                .foregroundStyle(.secondary)
                 .frame(width: 30)
         }
-        .listRowBackground(CaloTheme.cardBackground)
     }
 }

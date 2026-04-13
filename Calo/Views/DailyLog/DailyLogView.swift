@@ -115,19 +115,16 @@ struct DailyLogView: View {
                     List {
                         ForEach(entriesForDate.sorted(by: { $0.timestamp > $1.timestamp })) { entry in
                             FoodEntryRow(entry: entry)
-                                .listRowBackground(Color.clear)
                                 .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                         }
                         .onDelete(perform: deleteEntries)
                     }
                     .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                 }
             }
-            .background(Color.black.ignoresSafeArea())
             .navigationTitle("Log")
             .navigationBarTitleDisplayMode(.large)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .preferredColorScheme(.dark)
         }
     }
 

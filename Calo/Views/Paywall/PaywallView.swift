@@ -53,8 +53,7 @@ struct PaywallView: View {
                             .foregroundStyle(.white)
                             .padding(16)
                             .frame(maxWidth: .infinity)
-                            .background(CaloTheme.coral.opacity(0.8))
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .background(CaloTheme.coral.opacity(0.8), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
                         .buttonStyle(.plain)
 
@@ -70,8 +69,7 @@ struct PaywallView: View {
                                             .font(.caption2.bold())
                                             .padding(.horizontal, 6)
                                             .padding(.vertical, 2)
-                                            .background(.white.opacity(0.2))
-                                            .clipShape(Capsule())
+                                            .background(.white.opacity(0.2), in: Capsule())
                                     }
                                     Text("one-time purchase")
                                         .font(.caption)
@@ -84,8 +82,7 @@ struct PaywallView: View {
                             .foregroundStyle(.white)
                             .padding(16)
                             .frame(maxWidth: .infinity)
-                            .background(CaloTheme.coral)
-                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .background(CaloTheme.coral, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
                         .buttonStyle(.plain)
                     }
@@ -107,14 +104,6 @@ struct PaywallView: View {
                         .padding(.bottom, 20)
                 }
             }
-            .background(
-                LinearGradient(
-                    colors: [Color(white: 0.08), .black],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

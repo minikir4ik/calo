@@ -70,17 +70,14 @@ struct ResultView: View {
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 52)
-                            .background(CaloTheme.coral)
-                            .clipShape(Capsule())
+                            .background(CaloTheme.coral, in: Capsule())
                     }
                     .padding(.horizontal, 16)
                     .padding(.bottom, 20)
                 }
             }
-            .background(Color.black.ignoresSafeArea())
             .navigationTitle("Result")
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Done") { dismiss() }
@@ -170,7 +167,6 @@ struct FoodResultCard: View {
             }
         }
         .padding(14)
-        .background(CaloTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }

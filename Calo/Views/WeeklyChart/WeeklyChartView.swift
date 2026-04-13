@@ -121,8 +121,7 @@ struct WeeklyChartView: View {
                             }
                         }
                         .padding(16)
-                        .background(CaloTheme.cardBackground)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                         .padding(.horizontal, 16)
                         .transition(.opacity)
                     }
@@ -135,11 +134,9 @@ struct WeeklyChartView: View {
                     .padding(.bottom, 20)
                 }
             }
-            .background(Color.black.ignoresSafeArea())
             .navigationTitle("Weekly")
             .navigationBarTitleDisplayMode(.large)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .animation(CaloTheme.springAnimation, value: selectedDay?.id)
+            .preferredColorScheme(.dark)
         }
     }
 
@@ -166,8 +163,7 @@ struct StatBlock: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)
-        .background(CaloTheme.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 

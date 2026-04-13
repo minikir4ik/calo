@@ -18,6 +18,7 @@ struct ScanView: View {
     private var settings: UserSettings? { allSettings.first }
 
     var body: some View {
+        NavigationStack {
         VStack(spacing: 0) {
             // Scan counter pill
             HStack {
@@ -99,7 +100,6 @@ struct ScanView: View {
                             .background(CaloTheme.coral, in: Capsule())
                     }
                     .buttonStyle(.plain)
-                    .transition(.scale.combined(with: .opacity))
                 }
 
                 Button(action: { showCamera = true }) {
@@ -121,11 +121,13 @@ struct ScanView: View {
                 }
             }
             .padding(.horizontal, 16)
-            .animation(CaloTheme.springAnimation, value: foodDescription.isEmpty)
 
             Spacer().frame(height: 12)
         }
-        .background(Color.black.ignoresSafeArea())
+        .navigationTitle("Scan")
+        .navigationBarTitleDisplayMode(.inline)
+        .preferredColorScheme(.dark)
+        }
         .fullScreenCover(isPresented: $showCamera) {
             CameraView { image in
                 withAnimation(CaloTheme.springAnimation) {
