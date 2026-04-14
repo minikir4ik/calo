@@ -3,6 +3,7 @@ import SwiftData
 
 struct ScanView: View {
     @Environment(\.modelContext) private var modelContext
+    @EnvironmentObject private var premiumManager: PremiumManager
     @Query private var allSettings: [UserSettings]
 
     @State private var capturedImage: UIImage?
@@ -22,8 +23,8 @@ struct ScanView: View {
         VStack(spacing: 0) {
             // Scan counter pill
             HStack {
-                if let settings, !settings.isPremium {
-                    Text("\(settings.scansRemainingToday) scans remaining")
+                if !premiumManager.isPremium {
+                    Text("\(premiumManager.dailyScansRemaining) scans remaining")
                         .font(.caption.weight(.medium))
                         .foregroundStyle(.white.opacity(0.8))
                         .padding(.horizontal, 12)
@@ -146,7 +147,7 @@ struct ScanView: View {
                 ResultView(
                     result: result,
                     image: capturedImage,
-                    isPremium: settings?.isPremium ?? false
+                    isPremium: premiumManager.isPremium
                 ) {
                     addToLog(result: result)
                     showResult = false
@@ -160,8 +161,7 @@ struct ScanView: View {
     }
 
     private func analyzeFood() {
-        guard let settings else { return }
-        if !settings.canScan {
+        if !premiumManager.canScan() {
             showPaywall = true
             return
         }
@@ -175,7 +175,7 @@ struct ScanView: View {
                     imageData: imageData
                 )
                 await MainActor.run {
-                    settings.recordScan()
+                    premiumManager.recordScan()
                     analysisResult = result
                     isAnalyzing = false
                     showResult = true

@@ -41,13 +41,13 @@
 - [ ] RevenueCat: Create entitlement "premium"
 - [ ] RevenueCat: Create products, map to premium
 - [ ] RevenueCat: Create offering "default" with both packages
-- [ ] Code: Add RevenueCat SDK via Swift Package Manager
-- [ ] Code: Initialize Purchases in CaloApp.swift
-- [ ] Code: Rewrite PaywallView to use real RevenueCat offerings
-- [ ] Code: Create PremiumManager class to check entitlements
-- [ ] Code: Wire scan limit enforcement to PremiumManager
-- [ ] Code: Wire share watermark to PremiumManager
-- [ ] Code: Add Restore Purchases functionality
+- [x] Code: Add RevenueCat SDK via Swift Package Manager
+- [x] Code: Initialize Purchases in CaloApp.swift
+- [x] Code: Rewrite PaywallView to use real RevenueCat offerings
+- [x] Code: Create PremiumManager class to check entitlements
+- [x] Code: Wire scan limit enforcement to PremiumManager
+- [x] Code: Wire share watermark to PremiumManager
+- [x] Code: Add Restore Purchases functionality
 - [ ] Test: Sandbox purchase weekly
 - [ ] Test: Sandbox purchase lifetime
 - [ ] Test: Restore purchases

@@ -1,9 +1,13 @@
 import SwiftUI
 import SwiftData
+import RevenueCat
 
 struct SettingsView: View {
     @Query private var allSettings: [UserSettings]
+    @EnvironmentObject private var premiumManager: PremiumManager
     @State private var showPaywall = false
+    @State private var isRestoring = false
+    @State private var restoreMessage: String?
 
     private var settings: UserSettings? { allSettings.first }
 
@@ -12,25 +16,44 @@ struct SettingsView: View {
             Form {
                 Section {
                     HStack {
-                        Image(systemName: settings?.isPremium == true ? "crown.fill" : "person.fill")
-                            .foregroundStyle(settings?.isPremium == true ? .yellow : .secondary)
+                        Image(systemName: premiumManager.isPremium ? "crown.fill" : "person.fill")
+                            .foregroundStyle(premiumManager.isPremium ? .yellow : .secondary)
                             .frame(width: 24)
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(settings?.isPremium == true ? "Premium" : "Free Plan")
+                            Text(premiumManager.isPremium ? "Premium" : "Free Plan")
                                 .font(.body.weight(.medium))
-                            if let settings, !settings.isPremium {
-                                Text("\(settings.dailyScanCount)/\(UserSettings.maxFreeScans) scans today")
+                            if !premiumManager.isPremium {
+                                Text("\(premiumManager.dailyScansRemaining)/\(PremiumManager.maxFreeScans) scans today")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                         }
                     }
 
-                    if settings?.isPremium != true {
+                    if !premiumManager.isPremium {
                         Button("Upgrade to Premium") {
                             showPaywall = true
                         }
                         .foregroundStyle(CaloTheme.coral)
+                    }
+
+                    Button {
+                        restorePurchases()
+                    } label: {
+                        HStack {
+                            Text("Restore Purchases")
+                            Spacer()
+                            if isRestoring {
+                                ProgressView()
+                            }
+                        }
+                    }
+                    .disabled(isRestoring)
+
+                    if let restoreMessage {
+                        Text(restoreMessage)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 } header: {
                     Text("Account").foregroundStyle(CaloTheme.coral)
@@ -80,6 +103,21 @@ struct SettingsView: View {
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
             }
+        }
+    }
+
+    private func restorePurchases() {
+        isRestoring = true
+        restoreMessage = nil
+        Task {
+            do {
+                _ = try await Purchases.shared.restorePurchases()
+                await premiumManager.checkPremiumStatus()
+                restoreMessage = premiumManager.isPremium ? "Premium restored!" : "No active purchases found."
+            } catch {
+                restoreMessage = error.localizedDescription
+            }
+            isRestoring = false
         }
     }
 }

@@ -19,11 +19,14 @@
 		A06D79F6C84E21D982BFECFA /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30555CDA31294C9E1D4BE9FA /* CameraView.swift */; };
 		A436559CBD31B28F5FA44591 /* CaloApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C587ABD4FF4BA9EB33671932 /* CaloApp.swift */; };
 		ABDF4779AD23492D75AC591C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7EF15CE3DB091EBF0B86B5 /* Extensions.swift */; };
+		AF6FF5962F8E53FC00B08026 /* PremiumManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6FF5952F8E53FC00B08026 /* PremiumManager.swift */; };
 		C4CD5D9741F8AEE2842C8F55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3BB3968995A15195DD353B9 /* Assets.xcassets */; };
 		C4D84B93FBD7683A3230A784 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D37B13CDD7A41FD1EF22D8 /* ContentView.swift */; };
 		D21DB716EE411034B6BB2008 /* DailyLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76321B17698DC9DBDD1E6B2 /* DailyLogView.swift */; };
 		DF063768F94BD4EAE714BE01 /* USDAService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A280F4E9D9FBD1B30ED09044 /* USDAService.swift */; };
 		E819D29311D710690CF10A55 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709DAF69384DCB057B69E286 /* PaywallView.swift */; };
+		AF6FF5A02F8E580000B08026 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF59F2F8E580000B08026 /* RevenueCat */; };
+		AF6FF5A22F8E580000B08026 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF5A12F8E580000B08026 /* RevenueCatUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +44,7 @@
 		9F88BEDA307D505154C9E230 /* ScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanView.swift; sourceTree = "<group>"; };
 		A280F4E9D9FBD1B30ED09044 /* USDAService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USDAService.swift; sourceTree = "<group>"; };
 		A3BB3968995A15195DD353B9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AF6FF5952F8E53FC00B08026 /* PremiumManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumManager.swift; sourceTree = "<group>"; };
 		BCC98B39EDB68D32ED643D32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C587ABD4FF4BA9EB33671932 /* CaloApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaloApp.swift; sourceTree = "<group>"; };
 		D7323FBFD3D656A13190DDFE /* CaloTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaloTheme.swift; sourceTree = "<group>"; };
@@ -48,6 +52,18 @@
 		EB12F73FADF5DC870305309F /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		F76321B17698DC9DBDD1E6B2 /* DailyLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyLogView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AF6FF5A32F8E580000B08026 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AF6FF5A02F8E580000B08026 /* RevenueCat in Frameworks */,
+				AF6FF5A22F8E580000B08026 /* RevenueCatUI in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0B85CA2A4164F89B2D3113AE /* Scan */ = {
@@ -105,6 +121,7 @@
 			children = (
 				56E37741677673E2AAF4D39C /* Calo */,
 				FB399E68DF8CE2C956C9B46B /* calo-swift */,
+				AF6FF5982F8E55E000B08026 /* Frameworks */,
 				420FEF51DF40E634B0A7E4F0 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -115,6 +132,7 @@
 				67415963F4064E8FF6EAD10D /* FoodAnalysisService.swift */,
 				66AEA0D44D59DA9B0449DFA4 /* GeminiService.swift */,
 				A280F4E9D9FBD1B30ED09044 /* USDAService.swift */,
+				AF6FF5952F8E53FC00B08026 /* PremiumManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -125,6 +143,13 @@
 				F76321B17698DC9DBDD1E6B2 /* DailyLogView.swift */,
 			);
 			path = DailyLog;
+			sourceTree = "<group>";
+		};
+		AF6FF5982F8E55E000B08026 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		BA5C20961DD742BEFBFC17D0 /* Views */ = {
@@ -181,6 +206,7 @@
 			buildConfigurationList = 37881D72920438632B015BF1 /* Build configuration list for PBXNativeTarget "Calo" */;
 			buildPhases = (
 				E81D792C200C87FDB1CA9A57 /* Sources */,
+				AF6FF5A32F8E580000B08026 /* Frameworks */,
 				FE25D68030900C86EE2F8A7B /* Resources */,
 			);
 			buildRules = (
@@ -189,6 +215,8 @@
 			);
 			name = Calo;
 			packageProductDependencies = (
+				AF6FF59F2F8E580000B08026 /* RevenueCat */,
+				AF6FF5A12F8E580000B08026 /* RevenueCatUI */,
 			);
 			productName = Calo;
 			productReference = E4F4EF74D6CBD166FAA76D52 /* Calo.app */;
@@ -217,6 +245,9 @@
 			);
 			mainGroup = 6E6D11DD94A02976B1FCF892;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				AF6FF5992F8E570E00B08026 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 420FEF51DF40E634B0A7E4F0 /* Products */;
 			projectDirPath = "";
@@ -253,6 +284,7 @@
 				667DED63CF251D9F9614E61A /* FoodEntry.swift in Sources */,
 				29679D5921546E3017A7EBD2 /* GeminiService.swift in Sources */,
 				E819D29311D710690CF10A55 /* PaywallView.swift in Sources */,
+				AF6FF5962F8E53FC00B08026 /* PremiumManager.swift in Sources */,
 				747726F3EF2F87F58A27CB11 /* ResultView.swift in Sources */,
 				5824FD559743B907A01DB0C7 /* ScanView.swift in Sources */,
 				42123B79450D8A8117426972 /* SettingsView.swift in Sources */,
@@ -458,6 +490,30 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		AF6FF5992F8E570E00B08026 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		AF6FF59F2F8E580000B08026 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF6FF5992F8E570E00B08026 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+		AF6FF5A12F8E580000B08026 /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF6FF5992F8E570E00B08026 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCatUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 872392623DB7516732EA89F7 /* Project object */;
 }
