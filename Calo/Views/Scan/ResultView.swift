@@ -31,9 +31,9 @@ struct ResultView: View {
                             .foregroundStyle(CaloTheme.subtleText)
 
                         HStack(spacing: 24) {
-                            MacroPill(label: "Protein", value: result.totalProtein, color: .blue)
-                            MacroPill(label: "Carbs", value: result.totalCarbs, color: .orange)
-                            MacroPill(label: "Fat", value: result.totalFat, color: .purple)
+                            MacroPill(label: "Protein", value: result.totalProtein, color: CaloTheme.accentGreen)
+                            MacroPill(label: "Carbs", value: result.totalCarbs, color: CaloTheme.accentBlue)
+                            MacroPill(label: "Fat", value: result.totalFat, color: CaloTheme.accentPurple)
                         }
                         .padding(.top, 4)
                     }

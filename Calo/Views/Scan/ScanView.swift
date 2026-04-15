@@ -15,121 +15,158 @@ struct ScanView: View {
     @State private var showResult = false
     @State private var showPaywall = false
     @State private var foodDescription = ""
+    @State private var pulseAmount: CGFloat = 1.0
 
     private var settings: UserSettings? { allSettings.first }
 
     var body: some View {
-        NavigationStack {
-        VStack(spacing: 0) {
-            // Scan counter pill
-            HStack {
-                if !premiumManager.isPremium {
-                    Text("\(premiumManager.dailyScansRemaining) scans remaining")
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(.white.opacity(0.8))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.1), in: Capsule())
-                }
-                Spacer()
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
+        ZStack {
+            CaloTheme.background.ignoresSafeArea()
 
-            // Camera area — explicit flexible frame
-            GeometryReader { _ in
-                ZStack {
-                    if let capturedImage {
-                        Image(uiImage: capturedImage)
-                            .resizable()
-                            .scaledToFill()
-                    } else {
-                        Color(white: 0.1)
-                        Image(systemName: "camera.fill")
-                            .font(.system(size: 48))
-                            .foregroundStyle(.white.opacity(0.2))
+            VStack(spacing: 0) {
+                // Scan counter pill
+                HStack {
+                    if !premiumManager.isPremium {
+                        Text("\(premiumManager.dailyScansRemaining) scans left")
+                            .font(.caption2.weight(.medium))
+                            .foregroundStyle(.white.opacity(0.7))
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(.white.opacity(0.08), in: Capsule())
                     }
+                    Spacer()
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            }
-            .allowsHitTesting(false)
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
 
-            Spacer().frame(height: 16)
+                // Camera area
+                GeometryReader { geo in
+                    ZStack {
+                        if let capturedImage {
+                            Image(uiImage: capturedImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: geo.size.width, height: geo.size.height)
+                                .clipped()
+                        } else {
+                            Color(white: 0.08)
+                            VStack(spacing: 12) {
+                                Image(systemName: "viewfinder")
+                                    .font(.system(size: 56, weight: .thin))
+                                    .foregroundStyle(.white.opacity(0.15))
+                                Text("Tap to capture")
+                                    .font(.caption)
+                                    .foregroundStyle(.white.opacity(0.2))
+                            }
+                        }
+                    }
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20, style: .continuous)
+                            .stroke(CaloTheme.cardBorder, lineWidth: 0.5)
+                    )
+                    .onTapGesture { showCamera = true }
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
 
-            // Analyzing state
-            if isAnalyzing {
+                Spacer().frame(height: 16)
+
+                // Error
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundStyle(.red.opacity(0.9))
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 8)
+                }
+
+                // Text input
                 HStack(spacing: 10) {
-                    ProgressView().tint(.white)
-                    Text("Analyzing...")
+                    Image(systemName: "text.cursor")
+                        .foregroundStyle(.white.opacity(0.25))
                         .font(.subheadline)
-                        .foregroundStyle(CaloTheme.subtleText)
+                    TextField("Describe your food...", text: $foodDescription)
+                        .foregroundStyle(.white)
+                        .font(.subheadline)
                 }
-                .padding(.bottom, 8)
-            }
-
-            if let errorMessage {
-                Text(errorMessage)
-                    .font(.caption)
-                    .foregroundStyle(.red)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 4)
-            }
-
-            // Text input — no clipShape, use background with shape instead
-            TextField("Or describe your food...", text: $foodDescription)
                 .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                .foregroundStyle(.white)
-                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .fill(CaloTheme.cardBackground)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(CaloTheme.cardBorder, lineWidth: 0.5)
+                        )
+                )
+                .padding(.horizontal, 20)
 
-            Spacer().frame(height: 16)
+                Spacer().frame(height: 20)
 
-            // Bottom buttons
-            HStack(spacing: 16) {
-                if !foodDescription.isEmpty {
-                    Button(action: { analyzeFood() }) {
-                        Text("Scan")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.white)
-                            .frame(height: 44)
-                            .frame(maxWidth: .infinity)
-                            .background(CaloTheme.coral, in: Capsule())
+                // Bottom action area
+                HStack(spacing: 20) {
+                    // Text analyze button
+                    if !foodDescription.isEmpty {
+                        Button(action: { analyzeFood() }) {
+                            Text("Analyze")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 12)
+                                .background(CaloTheme.cardBackground, in: Capsule())
+                                .overlay(Capsule().stroke(CaloTheme.cardBorder, lineWidth: 0.5))
+                        }
+                        .buttonStyle(.plain)
+                        .transition(.opacity.combined(with: .scale(scale: 0.9)))
+                    }
+
+                    // Capture button
+                    Button(action: { showCamera = true }) {
+                        ZStack {
+                            if isAnalyzing {
+                                Circle()
+                                    .stroke(CaloTheme.coral.opacity(0.3), lineWidth: 3)
+                                    .frame(width: 76, height: 76)
+                                Circle()
+                                    .trim(from: 0, to: 0.3)
+                                    .stroke(CaloTheme.coral, style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                                    .frame(width: 76, height: 76)
+                                    .rotationEffect(.degrees(pulseAmount * 360))
+                                    .animation(.linear(duration: 1).repeatForever(autoreverses: false), value: pulseAmount)
+                                ProgressView()
+                                    .tint(.white)
+                            } else {
+                                Circle()
+                                    .fill(CaloTheme.coral)
+                                    .frame(width: 64, height: 64)
+                                    .shadow(color: CaloTheme.coral.opacity(0.4), radius: 12, y: 4)
+                                Image(systemName: "camera.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundStyle(.white)
+                                Circle()
+                                    .stroke(.white.opacity(0.15), lineWidth: 2)
+                                    .frame(width: 76, height: 76)
+                            }
+                        }
                     }
                     .buttonStyle(.plain)
-                }
+                    .disabled(isAnalyzing)
 
-                Button(action: { showCamera = true }) {
-                    ZStack {
-                        Circle()
-                            .fill(CaloTheme.coral)
-                            .frame(width: 70, height: 70)
-                        Image(systemName: "camera.fill")
-                            .font(.system(size: 24))
-                            .foregroundStyle(.white)
-                        Circle()
-                            .stroke(Color.white.opacity(0.25), lineWidth: 3)
-                            .frame(width: 80, height: 80)
+                    if !foodDescription.isEmpty {
+                        // Spacer to balance
+                        Color.clear
+                            .frame(width: 80, height: 1)
                     }
                 }
-                .buttonStyle(.plain)
+                .animation(CaloTheme.springAnimation, value: foodDescription.isEmpty)
 
-                if !foodDescription.isEmpty {
-                    Spacer()
-                        .frame(height: 44)
-                        .frame(maxWidth: .infinity)
-                }
+                Spacer().frame(height: 16)
             }
-            .padding(.horizontal, 16)
-
-            Spacer().frame(height: 12)
         }
-        .navigationBarHidden(true)
         .preferredColorScheme(.dark)
+        .onAppear {
+            if isAnalyzing { pulseAmount = 2.0 }
         }
         .fullScreenCover(isPresented: $showCamera) {
             CameraView { image in
@@ -168,6 +205,7 @@ struct ScanView: View {
         let description = foodDescription.isEmpty ? "Identify this food" : foodDescription
         isAnalyzing = true
         errorMessage = nil
+        pulseAmount = 2.0
         Task {
             do {
                 let result = try await FoodAnalysisService.analyze(

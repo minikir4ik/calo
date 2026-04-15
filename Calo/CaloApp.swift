@@ -1,11 +1,12 @@
 import SwiftUI
 import SwiftData
 import RevenueCat
+import Sentry
 
 @main
 struct CaloApp: App {
     let container: ModelContainer
-    @StateObject private var premiumManager = PremiumManager()
+    @StateObject private var premiumManager: PremiumManager
 
     init() {
         do {
@@ -16,10 +17,22 @@ struct CaloApp: App {
             fatalError("SwiftData container failed to initialize: \(error.localizedDescription)")
         }
 
+        // Sentry
+        if let dsn = Bundle.main.infoDictionary?["SentryDSN"] as? String, !dsn.isEmpty {
+            SentrySDK.start { options in
+                options.dsn = dsn
+                options.tracesSampleRate = 0.2
+                options.enableAutoSessionTracking = true
+            }
+        }
+
+        // RevenueCat
         if let apiKey = Bundle.main.infoDictionary?["RevenueCatAPIKey"] as? String, !apiKey.isEmpty {
             Purchases.logLevel = .debug
             Purchases.configure(withAPIKey: apiKey)
         }
+
+        _premiumManager = StateObject(wrappedValue: PremiumManager())
     }
 
     var body: some Scene {

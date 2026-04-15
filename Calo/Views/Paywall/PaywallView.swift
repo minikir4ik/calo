@@ -32,7 +32,7 @@ struct PaywallView: View {
 
                     // Features
                     VStack(alignment: .leading, spacing: 16) {
-                        FeatureRow(text: "Unlimited daily scans")
+                        FeatureRow(text: "30 daily scans")
                         FeatureRow(text: "Advanced macro analytics")
                         FeatureRow(text: "Clean sharing (no watermark)")
                         FeatureRow(text: "Cloud sync across devices")
@@ -63,7 +63,7 @@ struct PaywallView: View {
                                     title: "Annual",
                                     subtitle: "7-day free trial",
                                     price: annual.storeProduct.localizedPriceString,
-                                    badge: "SAVE 81%",
+                                    badge: "MOST POPULAR",
                                     isSelected: selectedPackageID == annual.identifier,
                                     isPurchasing: isPurchasing
                                 ) {

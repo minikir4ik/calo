@@ -27,6 +27,7 @@
 		E819D29311D710690CF10A55 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709DAF69384DCB057B69E286 /* PaywallView.swift */; };
 		AF6FF5A02F8E580000B08026 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF59F2F8E580000B08026 /* RevenueCat */; };
 		AF6FF5A22F8E580000B08026 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF5A12F8E580000B08026 /* RevenueCatUI */; };
+		AF6FF5B02F8F000000B08026 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF5AF2F8F000000B08026 /* Sentry */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 			files = (
 				AF6FF5A02F8E580000B08026 /* RevenueCat in Frameworks */,
 				AF6FF5A22F8E580000B08026 /* RevenueCatUI in Frameworks */,
+				AF6FF5B02F8F000000B08026 /* Sentry in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,6 +219,7 @@
 			packageProductDependencies = (
 				AF6FF59F2F8E580000B08026 /* RevenueCat */,
 				AF6FF5A12F8E580000B08026 /* RevenueCatUI */,
+				AF6FF5AF2F8F000000B08026 /* Sentry */,
 			);
 			productName = Calo;
 			productReference = E4F4EF74D6CBD166FAA76D52 /* Calo.app */;
@@ -247,6 +250,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				AF6FF5992F8E570E00B08026 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+				AF6FF5AE2F8F000000B08026 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 420FEF51DF40E634B0A7E4F0 /* Products */;
@@ -500,6 +504,14 @@
 				kind = branch;
 			};
 		};
+		AF6FF5AE2F8F000000B08026 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -512,6 +524,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AF6FF5992F8E570E00B08026 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
 			productName = RevenueCatUI;
+		};
+		AF6FF5AF2F8F000000B08026 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AF6FF5AE2F8F000000B08026 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

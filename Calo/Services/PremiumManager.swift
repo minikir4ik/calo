@@ -2,7 +2,7 @@ import Foundation
 import RevenueCat
 
 @MainActor
-final class PremiumManager: ObservableObject {
+class PremiumManager: NSObject, ObservableObject {
     static let premiumEntitlementID = "premium"
     static let maxFreeScans = 3
     static let maxPremiumScans = 30
@@ -17,7 +17,8 @@ final class PremiumManager: ObservableObject {
         isPremium ? Self.maxPremiumScans : Self.maxFreeScans
     }
 
-    init() {
+    override init() {
+        super.init()
         loadScanData()
         resetIfNewDay()
 

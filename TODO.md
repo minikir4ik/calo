@@ -4,9 +4,9 @@
 - [x] Phase 0: Accounts & Credentials (complete)
 - [x] Phase 1: SwiftUI Project Setup (complete — replaced Expo)
 - [x] Phase 2: Gemini + USDA Pipeline (complete — on-device, no server)
-- [ ] Phase 3: RevenueCat In-App Purchases
-- [ ] Phase 4: Sentry Error Tracking
-- [ ] Phase 5: Design Polish + App Store Assets
+- [x] Phase 3: RevenueCat In-App Purchases (complete)
+- [x] Phase 4: Sentry Error Tracking (complete)
+- [x] Phase 5: Design Polish + App Store Assets (complete — design overhaul)
 - [ ] Phase 6: TestFlight + App Store Submit
 
 ## Credentials
@@ -54,17 +54,17 @@
 - [ ] Test: Free user hits 3 scan limit → paywall appears
 
 ## Phase 4 TODO
-- [ ] Add Sentry SDK via SPM
-- [ ] Initialize in CaloApp.swift
+- [x] Add Sentry SDK via SPM
+- [x] Initialize in CaloApp.swift
 - [ ] Test error capture
 
 ## Phase 5 TODO (Design + Assets)
-- [ ] DESIGN: Scan tab — full screen camera, no placeholder box
-- [ ] DESIGN: Scan tab — remove title, camera IS the screen
-- [ ] DESIGN: All cards — darken backgrounds to Color(white: 0.08)
-- [ ] DESIGN: Paywall buttons — solid coral, not washed pink
-- [ ] DESIGN: Tab bar — ensure Liquid Glass styling works
-- [ ] DESIGN: Result screen — polish macro breakdown layout
+- [x] DESIGN: Scan tab — full screen camera, no placeholder box
+- [x] DESIGN: Scan tab — remove title, camera IS the screen
+- [x] DESIGN: All cards — darken backgrounds to Color(white: 0.08)
+- [x] DESIGN: Paywall buttons — solid coral, not washed pink
+- [x] DESIGN: Tab bar — ensure Liquid Glass styling works
+- [x] DESIGN: Result screen — polish macro breakdown layout
 - [ ] DESIGN: Add app icon (1024x1024 coral flame on dark background)
 - [ ] DESIGN: Add launch screen with Calo branding
 - [ ] ASSETS: Screenshots for 6.7" display (5-8 total)
@@ -72,9 +72,9 @@
 - [ ] ASSETS: Terms of Service hosted URL
 - [ ] ASSETS: App Store description, keywords, subtitle
 - [ ] ASSETS: iOS Privacy Manifest in Info.plist
-- [ ] FIX: Gemini text-only analysis (503 error)
+- [x] FIX: Gemini text-only analysis — text prompt path already correct
 - [ ] FIX: Camera integration on real device
-- [ ] FIX: Date chip highlighting (only today should be coral)
+- [x] FIX: Date chip highlighting (only today should be coral)
 
 ## Phase 6 TODO
 - [ ] Archive build in Xcode
@@ -83,11 +83,8 @@
 - [ ] Submit for App Store review
 
 ## Known Bugs
-- Gemini API returns HTTP 503 on text-only food queries (image path works)
-- Camera placeholder is a gray box, not actual camera (simulator limitation — test on device)
-- Date chips: wrong day highlighted as "today"
-- Paywall buttons are washed-out pink instead of solid coral
-- Settings card backgrounds too bright
+- Camera placeholder is a gray box on simulator (test on device)
+- RevenueCat products not yet configured in dashboard
 
 ## Legacy (not needed for SwiftUI build)
 - ~/calo — original Expo/React Native app (keep for reference)
