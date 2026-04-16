@@ -15,7 +15,7 @@ struct GoalSelectionView: View {
         VStack(spacing: 0) {
             Spacer().frame(height: 20)
 
-            Text("What's your goal?")
+            Text("What\u{2019}s your goal?")
                 .font(.system(size: 28, weight: .bold))
                 .foregroundStyle(.white)
 
@@ -60,6 +60,7 @@ struct GoalSelectionView: View {
             Spacer().frame(height: 50)
         }
         .animation(.easeInOut(duration: 0.35), value: selectedGoal)
+        .background(Color.black.ignoresSafeArea())
     }
 }
 

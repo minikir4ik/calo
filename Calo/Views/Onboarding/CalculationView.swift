@@ -95,6 +95,7 @@ struct CalculationView: View {
 
             Spacer().frame(height: 50)
         }
+        .background(Color.black.ignoresSafeArea())
         .onAppear {
             withAnimation(.linear(duration: 1).repeatForever(autoreverses: false)) {
                 shimmerPhase = 360

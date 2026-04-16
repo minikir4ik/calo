@@ -146,6 +146,7 @@ struct TrialPaywallView: View {
             }
         }
         .scrollIndicators(.hidden)
+        .background(Color.black.ignoresSafeArea())
         .task {
             await loadOfferings()
         }

@@ -96,6 +96,22 @@
 - [x] OnboardingData added to SwiftData schema in CaloApp
 - [x] Build: 0 errors, 0 warnings
 
+## Session 2: Bug Blitz + Core Fixes
+- [x] Onboarding: black backgrounds on all screens for proper contrast
+- [x] Multi-food scan → single meal entry with components (Gemini returns meal_name + components)
+- [x] Smart meal naming — human-readable names from Gemini, USDA cleanup
+- [x] Food emoji from Gemini (emoji field in response, shown in log + dashboard)
+- [x] Name input in onboarding (NameInputView) → stored in UserSettings.firstName
+- [x] Personalized greeting on Dashboard: "Good morning, Kirill"
+- [x] Water logging: WaterLogSheet with ring progress, +/- buttons, daily reset
+- [x] AI Suggest: Gemini-powered meal suggestions based on remaining macros
+- [x] FoodEntry model: added emoji, componentsJSON fields
+- [x] UserSettings model: added firstName, water tracking fields
+- [x] ResultView: shows meal name + emoji + components breakdown
+- [x] DailyLogView: food emoji in entry rows
+- [x] Dashboard MealCard: emoji when no image
+- [x] Build: 0 errors, 0 warnings
+
 ## Phase 6 TODO
 - [ ] Archive build in Xcode
 - [ ] Upload to App Store Connect

@@ -235,20 +235,20 @@ struct ScanView: View {
     }
 
     private func addToLog(result: AnalysisResult) {
-        for food in result.foods {
-            let entry = FoodEntry(
-                foodName: food.name,
-                calories: food.calories,
-                protein: food.protein,
-                carbs: food.carbs,
-                fat: food.fat,
-                grams: food.grams,
-                confidence: food.confidence,
-                verified: food.verified,
-                imageData: imageData
-            )
-            modelContext.insert(entry)
-        }
+        let entry = FoodEntry(
+            foodName: result.mealName,
+            emoji: result.emoji,
+            calories: result.totalCalories,
+            protein: result.totalProtein,
+            carbs: result.totalCarbs,
+            fat: result.totalFat,
+            grams: result.totalGrams,
+            confidence: result.confidence,
+            verified: result.foods.contains(where: { $0.verified }),
+            imageData: imageData,
+            componentsJSON: result.componentsJSON
+        )
+        modelContext.insert(entry)
     }
 
     private func resetState() {

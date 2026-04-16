@@ -219,19 +219,25 @@ struct FoodEntryRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Food icon
-            Circle()
-                .fill(CaloTheme.coral.opacity(0.15))
-                .frame(width: 36, height: 36)
-                .overlay(
-                    Image(systemName: "fork.knife")
-                        .font(.system(size: 14))
-                        .foregroundStyle(CaloTheme.coral)
-                )
+            // Food emoji or icon
+            if !entry.emoji.isEmpty {
+                Text(entry.emoji)
+                    .font(.system(size: 24))
+                    .frame(width: 36, height: 36)
+            } else {
+                Circle()
+                    .fill(CaloTheme.coral.opacity(0.15))
+                    .frame(width: 36, height: 36)
+                    .overlay(
+                        Image(systemName: "fork.knife")
+                            .font(.system(size: 14))
+                            .foregroundStyle(CaloTheme.coral)
+                    )
+            }
 
             VStack(alignment: .leading, spacing: 3) {
                 HStack(spacing: 6) {
-                    Text(entry.foodName.capitalized)
+                    Text(entry.foodName)
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.white)
                     if entry.verified {

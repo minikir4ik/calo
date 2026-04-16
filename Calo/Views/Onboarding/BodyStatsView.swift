@@ -210,6 +210,7 @@ struct BodyStatsView: View {
             }
         }
         .scrollIndicators(.hidden)
+        .background(Color.black.ignoresSafeArea())
     }
 }
 

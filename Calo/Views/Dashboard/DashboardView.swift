@@ -9,6 +9,8 @@ struct DashboardView: View {
 
     @State private var showScanSheet = false
     @State private var showPaywall = false
+    @State private var showWaterSheet = false
+    @State private var showAISuggestSheet = false
     @State private var ringAnimated = false
 
     private var settings: UserSettings? { allSettings.first }
@@ -82,6 +84,12 @@ struct DashboardView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
+        .sheet(isPresented: $showWaterSheet) {
+            WaterLogSheet()
+        }
+        .sheet(isPresented: $showAISuggestSheet) {
+            AISuggestSheet()
+        }
         .onAppear {
             withAnimation(.spring(response: 0.8, dampingFraction: 0.7).delay(0.3)) {
                 ringAnimated = true
@@ -94,7 +102,7 @@ struct DashboardView: View {
     private var headerSection: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(DashboardIntelligenceService.greeting())
+                Text(DashboardIntelligenceService.greeting(name: settings?.firstName))
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(.white)
 
@@ -216,12 +224,12 @@ struct DashboardView: View {
 
             QuickActionButton(icon: "sparkles", label: "AI Suggest") {
                 HapticManager.mediumImpact()
-                // Placeholder — future feature
+                showAISuggestSheet = true
             }
 
             QuickActionButton(icon: "drop.fill", label: "Log Water") {
                 HapticManager.mediumImpact()
-                // Placeholder — future feature
+                showWaterSheet = true
             }
         }
     }
@@ -399,6 +407,13 @@ private struct MealCard: View {
                         .scaledToFill()
                         .frame(width: 100, height: 56)
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                } else if !entry.emoji.isEmpty {
+                    RoundedRectangle(cornerRadius: 8, style: .continuous)
+                        .fill(CaloTheme.coral.opacity(0.1))
+                        .frame(width: 100, height: 56)
+                        .overlay(
+                            Text(entry.emoji).font(.system(size: 28))
+                        )
                 } else {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(CaloTheme.coral.opacity(0.1))
@@ -410,7 +425,7 @@ private struct MealCard: View {
                 }
             }
 
-            Text(entry.foodName.capitalized)
+            Text(entry.foodName)
                 .font(.caption.weight(.medium))
                 .foregroundStyle(.white)
                 .lineLimit(1)

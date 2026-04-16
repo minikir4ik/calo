@@ -61,6 +61,7 @@ struct ActivityLevelView: View {
             Spacer().frame(height: 50)
         }
         .animation(.easeInOut(duration: 0.35), value: selectedLevel)
+        .background(Color.black.ignoresSafeArea())
     }
 }
 

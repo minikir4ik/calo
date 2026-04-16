@@ -5,6 +5,7 @@ import SwiftData
 final class FoodEntry {
     var id: UUID
     var foodName: String
+    var emoji: String
     var calories: Double
     var protein: Double
     var carbs: Double
@@ -15,9 +16,11 @@ final class FoodEntry {
     @Attribute(.externalStorage) var imageData: Data?
     var timestamp: Date
     var mealType: String
+    var componentsJSON: String?
 
     init(
         foodName: String,
+        emoji: String = "",
         calories: Double,
         protein: Double,
         carbs: Double,
@@ -27,10 +30,12 @@ final class FoodEntry {
         verified: Bool,
         imageData: Data? = nil,
         timestamp: Date = .now,
-        mealType: String = "other"
+        mealType: String = "other",
+        componentsJSON: String? = nil
     ) {
         self.id = UUID()
         self.foodName = foodName
+        self.emoji = emoji
         self.calories = calories
         self.protein = protein
         self.carbs = carbs
@@ -41,6 +46,7 @@ final class FoodEntry {
         self.imageData = imageData
         self.timestamp = timestamp
         self.mealType = mealType
+        self.componentsJSON = componentsJSON
     }
 }
 
@@ -59,5 +65,21 @@ extension FoodEntry {
 
     static var sevenDaysAgo: Date {
         Calendar.current.date(byAdding: .day, value: -6, to: today)!
+    }
+
+    struct Component: Codable, Identifiable {
+        let name: String
+        let calories: Double
+        let protein: Double
+        let carbs: Double
+        let fat: Double
+        let grams: Double
+
+        var id: String { name }
+    }
+
+    var components: [Component] {
+        guard let json = componentsJSON, let data = json.data(using: .utf8) else { return [] }
+        return (try? JSONDecoder().decode([Component].self, from: data)) ?? []
     }
 }

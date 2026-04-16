@@ -9,6 +9,7 @@ struct OnboardingFlowView: View {
     let onComplete: () -> Void
 
     @State private var currentStep = 0
+    @State private var firstName = ""
     @State private var goal = ""
     @State private var activityLevel = ""
     @State private var gender = "male"
@@ -19,12 +20,13 @@ struct OnboardingFlowView: View {
     @State private var weeklyRate: Double = 0.5
     @State private var macros = TDEECalculator.MacroResult(calories: 2000, protein: 150, carbs: 250, fat: 65)
 
-    private var totalSteps: Int {
-        showPaceStep ? 8 : 7
-    }
-
+    // Steps: Welcome(0), Name(1), Goal(2), Activity(3), BodyStats(4), [Pace(5)], Calculation, Demo, Paywall
     private var showPaceStep: Bool {
         goal == "lose_fat" || goal == "build_muscle"
+    }
+
+    private var totalSteps: Int {
+        showPaceStep ? 9 : 8
     }
 
     var body: some View {
@@ -72,11 +74,14 @@ struct OnboardingFlowView: View {
                     WelcomeView(onContinue: { advance() })
                         .tag(0)
 
-                    GoalSelectionView(selectedGoal: $goal, onContinue: { advance() })
+                    NameInputView(name: $firstName, onContinue: { advance() })
                         .tag(1)
 
-                    ActivityLevelView(selectedLevel: $activityLevel, onContinue: { advance() })
+                    GoalSelectionView(selectedGoal: $goal, onContinue: { advance() })
                         .tag(2)
+
+                    ActivityLevelView(selectedLevel: $activityLevel, onContinue: { advance() })
+                        .tag(3)
 
                     BodyStatsView(
                         gender: $gender,
@@ -87,7 +92,7 @@ struct OnboardingFlowView: View {
                         showTargetWeight: showPaceStep,
                         onContinue: { advance() }
                     )
-                    .tag(3)
+                    .tag(4)
 
                     if showPaceStep {
                         PaceView(
@@ -96,8 +101,23 @@ struct OnboardingFlowView: View {
                             targetWeight: targetWeightKg,
                             onContinue: { advance() }
                         )
-                        .tag(4)
+                        .tag(5)
 
+                        CalculationView(
+                            calories: macros.calories,
+                            protein: macros.protein,
+                            carbs: macros.carbs,
+                            fat: macros.fat,
+                            onContinue: { advance() }
+                        )
+                        .tag(6)
+
+                        DemoView(onContinue: { advance() })
+                            .tag(7)
+
+                        TrialPaywallView(onContinue: { completeOnboarding() })
+                            .tag(8)
+                    } else {
                         CalculationView(
                             calories: macros.calories,
                             protein: macros.protein,
@@ -112,21 +132,6 @@ struct OnboardingFlowView: View {
 
                         TrialPaywallView(onContinue: { completeOnboarding() })
                             .tag(7)
-                    } else {
-                        CalculationView(
-                            calories: macros.calories,
-                            protein: macros.protein,
-                            carbs: macros.carbs,
-                            fat: macros.fat,
-                            onContinue: { advance() }
-                        )
-                        .tag(4)
-
-                        DemoView(onContinue: { advance() })
-                            .tag(5)
-
-                        TrialPaywallView(onContinue: { completeOnboarding() })
-                            .tag(6)
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
@@ -138,7 +143,7 @@ struct OnboardingFlowView: View {
 
     private func advance() {
         // Calculate macros before showing the calculation screen
-        let calcStep = showPaceStep ? 5 : 4
+        let calcStep = showPaceStep ? 6 : 5
         if currentStep == calcStep - 1 {
             calculateMacros()
         }
@@ -184,7 +189,7 @@ struct OnboardingFlowView: View {
         onboarding.calculatedCarbs = macros.carbs
         onboarding.calculatedFat = macros.fat
 
-        // Update UserSettings with calculated goals
+        // Update UserSettings with calculated goals + name
         let settings: UserSettings
         if let existing = allSettings.first {
             settings = existing
@@ -193,6 +198,7 @@ struct OnboardingFlowView: View {
             modelContext.insert(settings)
         }
 
+        settings.firstName = firstName.trimmingCharacters(in: .whitespaces)
         settings.dailyCalorieGoal = macros.calories
         settings.dailyProteinGoal = macros.protein
         settings.dailyCarbsGoal = macros.carbs

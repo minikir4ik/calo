@@ -96,6 +96,7 @@ struct DemoView: View {
 
             Spacer().frame(height: 50)
         }
+        .background(Color.black.ignoresSafeArea())
         .onAppear {
             withAnimation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true)) {
                 animationPhase = 1

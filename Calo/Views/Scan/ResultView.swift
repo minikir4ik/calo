@@ -21,6 +21,18 @@ struct ResultView: View {
                             .clipped()
                     }
 
+                    // Meal name + emoji
+                    VStack(spacing: 6) {
+                        if !result.emoji.isEmpty {
+                            Text(result.emoji)
+                                .font(.system(size: 40))
+                        }
+                        Text(result.mealName)
+                            .font(.title2.weight(.bold))
+                            .foregroundStyle(.white)
+                            .multilineTextAlignment(.center)
+                    }
+
                     // Total summary
                     VStack(spacing: 10) {
                         Text("\(result.totalCalories.wholeOrOne)")
@@ -39,15 +51,31 @@ struct ResultView: View {
                     }
                     .padding(.horizontal, 16)
 
-                    Rectangle().fill(CaloTheme.separator).frame(height: 0.5).padding(.horizontal, 16)
+                    // Components section (if multiple)
+                    if result.foods.count > 1 {
+                        Rectangle().fill(CaloTheme.separator).frame(height: 0.5).padding(.horizontal, 16)
 
-                    // Individual foods
-                    VStack(spacing: 12) {
-                        ForEach(result.foods) { food in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Components")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(CaloTheme.subtleText)
+                                .padding(.horizontal, 16)
+
+                            VStack(spacing: 8) {
+                                ForEach(result.foods) { food in
+                                    FoodResultCard(food: food)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                    } else if let food = result.foods.first {
+                        Rectangle().fill(CaloTheme.separator).frame(height: 0.5).padding(.horizontal, 16)
+
+                        VStack(spacing: 8) {
                             FoodResultCard(food: food)
                         }
+                        .padding(.horizontal, 16)
                     }
-                    .padding(.horizontal, 16)
 
                     // Share
                     ShareLink(
@@ -91,8 +119,10 @@ struct ResultView: View {
     }
 
     private var shareText: String {
-        var text = result.foods.map { "\($0.name): \($0.calories.wholeOrOne) cal" }.joined(separator: "\n")
-        text += "\nTotal: \(result.totalCalories.wholeOrOne) cal"
+        var text = "\(result.emoji) \(result.mealName): \(result.totalCalories.wholeOrOne) cal"
+        if result.foods.count > 1 {
+            text += "\n" + result.foods.map { "  • \($0.name): \($0.calories.wholeOrOne) cal" }.joined(separator: "\n")
+        }
         if !isPremium {
             text += "\n\nTracked with Calo"
         }
@@ -123,7 +153,7 @@ struct FoodResultCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text(food.name.capitalized)
+                Text(food.name)
                     .font(.headline)
                     .foregroundStyle(.white)
                 Spacer()

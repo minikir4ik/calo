@@ -115,6 +115,7 @@ struct PaceView: View {
             Spacer().frame(height: 50)
         }
         .animation(.easeInOut(duration: 0.35), value: weeklyRate)
+        .background(Color.black.ignoresSafeArea())
     }
 }
 

@@ -109,13 +109,19 @@ enum DashboardIntelligenceService {
         return streak
     }
 
-    static func greeting() -> String {
+    static func greeting(name: String? = nil) -> String {
         let hour = Calendar.current.component(.hour, from: .now)
+        let timeGreeting: String
         switch hour {
-        case 5..<12: return "Good morning"
-        case 12..<17: return "Good afternoon"
-        case 17..<22: return "Good evening"
-        default: return "Good night"
+        case 5..<12: timeGreeting = "Good morning"
+        case 12..<17: timeGreeting = "Good afternoon"
+        case 17..<22: timeGreeting = "Good evening"
+        default: timeGreeting = "Good night"
         }
+
+        if let name, !name.isEmpty {
+            return "\(timeGreeting), \(name)"
+        }
+        return timeGreeting
     }
 }
