@@ -7,6 +7,7 @@
 - [x] Phase 3: RevenueCat In-App Purchases (complete)
 - [x] Phase 4: Sentry Error Tracking (complete)
 - [x] Phase 5: Design Polish + App Store Assets (complete — design overhaul)
+- [x] Phase 5.5: Onboarding Flow + Morning Dashboard (complete)
 - [ ] Phase 6: TestFlight + App Store Submit
 
 ## Credentials
@@ -75,6 +76,25 @@
 - [x] FIX: Gemini text-only analysis — text prompt path already correct
 - [ ] FIX: Camera integration on real device
 - [x] FIX: Date chip highlighting (only today should be coral)
+
+## Phase 5.5 TODO (Onboarding + Dashboard)
+- [x] OnboardingData SwiftData model
+- [x] TDEECalculator (Mifflin-St Jeor + activity + goal adjustments)
+- [x] 8-screen onboarding flow (Welcome, Goal, Activity, BodyStats, Pace, Calculation, Demo, TrialPaywall)
+- [x] OnboardingFlowView coordinator with page transitions + progress dots
+- [x] Morning Dashboard replaces Scan as home tab
+- [x] Dashboard: Daily intelligence card with contextual insights
+- [x] Dashboard: Macro progress rings (calorie + protein/carbs/fat)
+- [x] Dashboard: Quick actions (Scan Meal, AI Suggest, Log Water)
+- [x] Dashboard: Today's meals horizontal scroll
+- [x] Dashboard: Streak badge
+- [x] DashboardIntelligenceService (insights + streak counting)
+- [x] ScanSheet wrapper (scan triggered from Dashboard)
+- [x] HapticManager utility (selection, impact, success, warning)
+- [x] Haptic feedback throughout onboarding + dashboard + result view
+- [x] Updated ContentView: onboarding gate + new tab order (Home, Log, Insights, Settings)
+- [x] OnboardingData added to SwiftData schema in CaloApp
+- [x] Build: 0 errors, 0 warnings
 
 ## Phase 6 TODO
 - [ ] Archive build in Xcode

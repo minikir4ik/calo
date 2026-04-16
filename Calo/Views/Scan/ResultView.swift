@@ -64,7 +64,10 @@ struct ResultView: View {
                     }
 
                     // Add to Log
-                    Button(action: onAddToLog) {
+                    Button(action: {
+                        HapticManager.success()
+                        onAddToLog()
+                    }) {
                         Text("Add to Log")
                             .font(.headline)
                             .foregroundStyle(.white)

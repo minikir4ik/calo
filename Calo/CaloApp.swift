@@ -10,7 +10,7 @@ struct CaloApp: App {
 
     init() {
         do {
-            let schema = Schema([FoodEntry.self, UserSettings.self])
+            let schema = Schema([FoodEntry.self, UserSettings.self, OnboardingData.self])
             let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
             container = try ModelContainer(for: schema, configurations: [config])
         } catch {

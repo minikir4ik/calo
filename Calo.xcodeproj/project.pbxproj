@@ -20,14 +20,29 @@
 		A436559CBD31B28F5FA44591 /* CaloApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C587ABD4FF4BA9EB33671932 /* CaloApp.swift */; };
 		ABDF4779AD23492D75AC591C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7EF15CE3DB091EBF0B86B5 /* Extensions.swift */; };
 		AF6FF5962F8E53FC00B08026 /* PremiumManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF6FF5952F8E53FC00B08026 /* PremiumManager.swift */; };
+		AF6FF5A02F8E580000B08026 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF59F2F8E580000B08026 /* RevenueCat */; };
+		AF6FF5A22F8E580000B08026 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF5A12F8E580000B08026 /* RevenueCatUI */; };
+		AF6FF5B02F8F000000B08026 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF5AF2F8F000000B08026 /* Sentry */; };
+		AFDBE6832F9102B2004E2BF4 /* OnboardingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6822F9102B2004E2BF4 /* OnboardingData.swift */; };
+		AFDBE6852F9102B3004E2BF4 /* TDEECalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6842F9102B3004E2BF4 /* TDEECalculator.swift */; };
+		AFDBE6872F9102B4004E2BF4 /* HapticManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6862F9102B4004E2BF4 /* HapticManager.swift */; };
+		AFDBE6892F9102F7004E2BF4 /* WelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6882F9102F7004E2BF4 /* WelcomeView.swift */; };
+		AFDBE68B2F9102F8004E2BF4 /* GoalSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE68A2F9102F8004E2BF4 /* GoalSelectionView.swift */; };
+		AFDBE68D2F9102F9004E2BF4 /* ActivityLevelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE68C2F9102F9004E2BF4 /* ActivityLevelView.swift */; };
+		AFDBE68F2F9102FA004E2BF4 /* BodyStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE68E2F9102FA004E2BF4 /* BodyStatsView.swift */; };
+		AFDBE6912F910344004E2BF4 /* PaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6902F910344004E2BF4 /* PaceView.swift */; };
+		AFDBE6932F910345004E2BF4 /* CalculationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6922F910345004E2BF4 /* CalculationView.swift */; };
+		AFDBE6952F910346004E2BF4 /* DemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6942F910346004E2BF4 /* DemoView.swift */; };
+		AFDBE6972F910348004E2BF4 /* TrialPaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6962F910348004E2BF4 /* TrialPaywallView.swift */; };
+		AFDBE6992F91036B004E2BF4 /* OnboardingFlowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE6982F91036B004E2BF4 /* OnboardingFlowView.swift */; };
+		AFDBE69B2F910384004E2BF4 /* DashboardIntelligenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE69A2F910384004E2BF4 /* DashboardIntelligenceService.swift */; };
+		AFDBE69D2F910385004E2BF4 /* ScanSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE69C2F910385004E2BF4 /* ScanSheet.swift */; };
+		AFDBE69F2F9103B3004E2BF4 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFDBE69E2F9103B3004E2BF4 /* DashboardView.swift */; };
 		C4CD5D9741F8AEE2842C8F55 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A3BB3968995A15195DD353B9 /* Assets.xcassets */; };
 		C4D84B93FBD7683A3230A784 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D37B13CDD7A41FD1EF22D8 /* ContentView.swift */; };
 		D21DB716EE411034B6BB2008 /* DailyLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76321B17698DC9DBDD1E6B2 /* DailyLogView.swift */; };
 		DF063768F94BD4EAE714BE01 /* USDAService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A280F4E9D9FBD1B30ED09044 /* USDAService.swift */; };
 		E819D29311D710690CF10A55 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 709DAF69384DCB057B69E286 /* PaywallView.swift */; };
-		AF6FF5A02F8E580000B08026 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF59F2F8E580000B08026 /* RevenueCat */; };
-		AF6FF5A22F8E580000B08026 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF5A12F8E580000B08026 /* RevenueCatUI */; };
-		AF6FF5B02F8F000000B08026 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = AF6FF5AF2F8F000000B08026 /* Sentry */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +61,21 @@
 		A280F4E9D9FBD1B30ED09044 /* USDAService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USDAService.swift; sourceTree = "<group>"; };
 		A3BB3968995A15195DD353B9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AF6FF5952F8E53FC00B08026 /* PremiumManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PremiumManager.swift; sourceTree = "<group>"; };
+		AFDBE6822F9102B2004E2BF4 /* OnboardingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingData.swift; sourceTree = "<group>"; };
+		AFDBE6842F9102B3004E2BF4 /* TDEECalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TDEECalculator.swift; sourceTree = "<group>"; };
+		AFDBE6862F9102B4004E2BF4 /* HapticManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticManager.swift; sourceTree = "<group>"; };
+		AFDBE6882F9102F7004E2BF4 /* WelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeView.swift; sourceTree = "<group>"; };
+		AFDBE68A2F9102F8004E2BF4 /* GoalSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalSelectionView.swift; sourceTree = "<group>"; };
+		AFDBE68C2F9102F9004E2BF4 /* ActivityLevelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityLevelView.swift; sourceTree = "<group>"; };
+		AFDBE68E2F9102FA004E2BF4 /* BodyStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BodyStatsView.swift; sourceTree = "<group>"; };
+		AFDBE6902F910344004E2BF4 /* PaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaceView.swift; sourceTree = "<group>"; };
+		AFDBE6922F910345004E2BF4 /* CalculationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculationView.swift; sourceTree = "<group>"; };
+		AFDBE6942F910346004E2BF4 /* DemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoView.swift; sourceTree = "<group>"; };
+		AFDBE6962F910348004E2BF4 /* TrialPaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrialPaywallView.swift; sourceTree = "<group>"; };
+		AFDBE6982F91036B004E2BF4 /* OnboardingFlowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingFlowView.swift; sourceTree = "<group>"; };
+		AFDBE69A2F910384004E2BF4 /* DashboardIntelligenceService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardIntelligenceService.swift; sourceTree = "<group>"; };
+		AFDBE69C2F910385004E2BF4 /* ScanSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanSheet.swift; sourceTree = "<group>"; };
+		AFDBE69E2F9103B3004E2BF4 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		BCC98B39EDB68D32ED643D32 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		C587ABD4FF4BA9EB33671932 /* CaloApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaloApp.swift; sourceTree = "<group>"; };
 		D7323FBFD3D656A13190DDFE /* CaloTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaloTheme.swift; sourceTree = "<group>"; };
@@ -74,6 +104,7 @@
 				30555CDA31294C9E1D4BE9FA /* CameraView.swift */,
 				EB12F73FADF5DC870305309F /* ResultView.swift */,
 				9F88BEDA307D505154C9E230 /* ScanView.swift */,
+				AFDBE69C2F910385004E2BF4 /* ScanSheet.swift */,
 			);
 			path = Scan;
 			sourceTree = "<group>";
@@ -83,6 +114,7 @@
 			children = (
 				5AF28CF13FDD578C73BAE7F2 /* FoodEntry.swift */,
 				9EF148C0D27872EED14FD1A2 /* UserSettings.swift */,
+				AFDBE6822F9102B2004E2BF4 /* OnboardingData.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -135,6 +167,7 @@
 				66AEA0D44D59DA9B0449DFA4 /* GeminiService.swift */,
 				A280F4E9D9FBD1B30ED09044 /* USDAService.swift */,
 				AF6FF5952F8E53FC00B08026 /* PremiumManager.swift */,
+				AFDBE69A2F910384004E2BF4 /* DashboardIntelligenceService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -154,6 +187,30 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		AFDBE6802F91029A004E2BF4 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				AFDBE6882F9102F7004E2BF4 /* WelcomeView.swift */,
+				AFDBE68A2F9102F8004E2BF4 /* GoalSelectionView.swift */,
+				AFDBE68C2F9102F9004E2BF4 /* ActivityLevelView.swift */,
+				AFDBE68E2F9102FA004E2BF4 /* BodyStatsView.swift */,
+				AFDBE6902F910344004E2BF4 /* PaceView.swift */,
+				AFDBE6922F910345004E2BF4 /* CalculationView.swift */,
+				AFDBE6942F910346004E2BF4 /* DemoView.swift */,
+				AFDBE6962F910348004E2BF4 /* TrialPaywallView.swift */,
+				AFDBE6982F91036B004E2BF4 /* OnboardingFlowView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		AFDBE6812F91029B004E2BF4 /* Dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				AFDBE69E2F9103B3004E2BF4 /* DashboardView.swift */,
+			);
+			path = Dashboard;
+			sourceTree = "<group>";
+		};
 		BA5C20961DD742BEFBFC17D0 /* Views */ = {
 			isa = PBXGroup;
 			children = (
@@ -162,6 +219,8 @@
 				0B85CA2A4164F89B2D3113AE /* Scan */,
 				FFA8A3CA81938AE1648B766A /* Settings */,
 				0DF5D74D68ACCED7FDB384C6 /* WeeklyChart */,
+				AFDBE6802F91029A004E2BF4 /* Onboarding */,
+				AFDBE6812F91029B004E2BF4 /* Dashboard */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -171,6 +230,8 @@
 			children = (
 				D7323FBFD3D656A13190DDFE /* CaloTheme.swift */,
 				1F7EF15CE3DB091EBF0B86B5 /* Extensions.swift */,
+				AFDBE6842F9102B3004E2BF4 /* TDEECalculator.swift */,
+				AFDBE6862F9102B4004E2BF4 /* HapticManager.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -278,19 +339,34 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AFDBE68B2F9102F8004E2BF4 /* GoalSelectionView.swift in Sources */,
+				AFDBE6912F910344004E2BF4 /* PaceView.swift in Sources */,
 				A436559CBD31B28F5FA44591 /* CaloApp.swift in Sources */,
 				349091D880350AAEC41AAAF2 /* CaloTheme.swift in Sources */,
 				A06D79F6C84E21D982BFECFA /* CameraView.swift in Sources */,
+				AFDBE69B2F910384004E2BF4 /* DashboardIntelligenceService.swift in Sources */,
 				C4D84B93FBD7683A3230A784 /* ContentView.swift in Sources */,
 				D21DB716EE411034B6BB2008 /* DailyLogView.swift in Sources */,
+				AFDBE68F2F9102FA004E2BF4 /* BodyStatsView.swift in Sources */,
 				ABDF4779AD23492D75AC591C /* Extensions.swift in Sources */,
+				AFDBE6872F9102B4004E2BF4 /* HapticManager.swift in Sources */,
+				AFDBE68D2F9102F9004E2BF4 /* ActivityLevelView.swift in Sources */,
 				08DD03A8EC982DCE18A51463 /* FoodAnalysisService.swift in Sources */,
+				AFDBE6992F91036B004E2BF4 /* OnboardingFlowView.swift in Sources */,
 				667DED63CF251D9F9614E61A /* FoodEntry.swift in Sources */,
+				AFDBE6852F9102B3004E2BF4 /* TDEECalculator.swift in Sources */,
+				AFDBE6932F910345004E2BF4 /* CalculationView.swift in Sources */,
+				AFDBE69F2F9103B3004E2BF4 /* DashboardView.swift in Sources */,
 				29679D5921546E3017A7EBD2 /* GeminiService.swift in Sources */,
 				E819D29311D710690CF10A55 /* PaywallView.swift in Sources */,
 				AF6FF5962F8E53FC00B08026 /* PremiumManager.swift in Sources */,
+				AFDBE6972F910348004E2BF4 /* TrialPaywallView.swift in Sources */,
+				AFDBE69D2F910385004E2BF4 /* ScanSheet.swift in Sources */,
+				AFDBE6892F9102F7004E2BF4 /* WelcomeView.swift in Sources */,
 				747726F3EF2F87F58A27CB11 /* ResultView.swift in Sources */,
+				AFDBE6832F9102B2004E2BF4 /* OnboardingData.swift in Sources */,
 				5824FD559743B907A01DB0C7 /* ScanView.swift in Sources */,
+				AFDBE6952F910346004E2BF4 /* DemoView.swift in Sources */,
 				42123B79450D8A8117426972 /* SettingsView.swift in Sources */,
 				DF063768F94BD4EAE714BE01 /* USDAService.swift in Sources */,
 				0209512F8170C51DE2D1FAEC /* UserSettings.swift in Sources */,
