@@ -142,10 +142,17 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
             .preferredColorScheme(.dark)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") { hideKeyboard() }
+                }
+            }
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
             }
         }
+        .onTapGesture { hideKeyboard() }
     }
 
     private func restorePurchases() {

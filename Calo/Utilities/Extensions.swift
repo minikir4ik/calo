@@ -1,5 +1,14 @@
 import Foundation
 import UIKit
+import SwiftUI
+
+// MARK: - Keyboard Dismiss
+
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
 
 extension Double {
     func rounded(to places: Int) -> Double {

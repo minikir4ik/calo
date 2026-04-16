@@ -54,9 +54,9 @@ class PremiumManager: NSObject, ObservableObject {
     // MARK: - Private
 
     private func updatePremium(from customerInfo: CustomerInfo) {
-        let wasPremiun = isPremium
+        let wasPremium = isPremium
         isPremium = customerInfo.entitlements[Self.premiumEntitlementID]?.isActive == true
-        if isPremium != wasPremiun {
+        if isPremium != wasPremium {
             resetIfNewDay()
         }
     }
@@ -87,7 +87,7 @@ class PremiumManager: NSObject, ObservableObject {
 
 // MARK: - PurchasesDelegate
 
-extension PremiumManager: @preconcurrency PurchasesDelegate {
+extension PremiumManager: PurchasesDelegate {
     nonisolated func purchases(_ purchases: Purchases, receivedUpdated customerInfo: CustomerInfo) {
         Task { @MainActor in
             updatePremium(from: customerInfo)

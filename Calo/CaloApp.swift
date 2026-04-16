@@ -24,6 +24,9 @@ struct CaloApp: App {
                 options.tracesSampleRate = 0.2
                 options.enableAutoSessionTracking = true
             }
+            #if DEBUG
+            SentrySDK.capture(message: "Calo launched successfully")
+            #endif
         }
 
         // RevenueCat
