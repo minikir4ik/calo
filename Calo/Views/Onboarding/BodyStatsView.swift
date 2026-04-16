@@ -60,7 +60,7 @@ struct BodyStatsView: View {
                             Text("\(age)")
                                 .font(.system(size: 32, weight: .bold, design: .rounded))
                                 .foregroundStyle(.white)
-                                .frame(width: 60)
+                                .frame(width: 60, height: 40, alignment: .leading)
 
                             Slider(value: Binding(
                                 get: { Double(age) },
@@ -69,6 +69,7 @@ struct BodyStatsView: View {
                             .tint(CaloTheme.coral)
                         }
                         .padding(16)
+                        .frame(height: 72)
                         .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
@@ -98,24 +99,26 @@ struct BodyStatsView: View {
                                 Text("\(heightFeet)'\(heightInches)\"")
                                     .font(.system(size: 32, weight: .bold, design: .rounded))
                                     .foregroundStyle(.white)
-                                    .frame(width: 90)
+                                    .frame(width: 110, height: 40, alignment: .leading)
                             } else {
                                 Text("\(Int(heightCm)) cm")
                                     .font(.system(size: 32, weight: .bold, design: .rounded))
                                     .foregroundStyle(.white)
-                                    .frame(width: 110)
+                                    .frame(width: 110, height: 40, alignment: .leading)
                             }
 
                             Slider(value: $heightCm, in: 120...230, step: 1)
                                 .tint(CaloTheme.coral)
                         }
                         .padding(16)
+                        .frame(height: 72)
                         .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
                                 .stroke(CaloTheme.cardBorder, lineWidth: 0.5)
                         )
                     }
+                    .animation(nil, value: heightCm)
 
                     // Weight
                     VStack(alignment: .leading, spacing: 10) {
@@ -128,12 +131,12 @@ struct BodyStatsView: View {
                                 Text("\(Int(weightLbs)) lbs")
                                     .font(.system(size: 32, weight: .bold, design: .rounded))
                                     .foregroundStyle(.white)
-                                    .frame(width: 110)
+                                    .frame(width: 110, height: 40, alignment: .leading)
                             } else {
                                 Text("\(String(format: "%.1f", weightKg)) kg")
                                     .font(.system(size: 32, weight: .bold, design: .rounded))
                                     .foregroundStyle(.white)
-                                    .frame(width: 110)
+                                    .frame(width: 110, height: 40, alignment: .leading)
                             }
 
                             Slider(
@@ -144,12 +147,14 @@ struct BodyStatsView: View {
                             .tint(CaloTheme.coral)
                         }
                         .padding(16)
+                        .frame(height: 72)
                         .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                         .overlay(
                             RoundedRectangle(cornerRadius: 14, style: .continuous)
                                 .stroke(CaloTheme.cardBorder, lineWidth: 0.5)
                         )
                     }
+                    .animation(nil, value: weightKg)
 
                     // Target weight
                     if showTargetWeight {
@@ -163,12 +168,12 @@ struct BodyStatsView: View {
                                     Text("\(Int(targetLbs)) lbs")
                                         .font(.system(size: 32, weight: .bold, design: .rounded))
                                         .foregroundStyle(.white)
-                                        .frame(width: 110)
+                                        .frame(width: 110, height: 40, alignment: .leading)
                                 } else {
                                     Text("\(String(format: "%.1f", targetWeightKg)) kg")
                                         .font(.system(size: 32, weight: .bold, design: .rounded))
                                         .foregroundStyle(.white)
-                                        .frame(width: 110)
+                                        .frame(width: 110, height: 40, alignment: .leading)
                                 }
 
                                 Slider(
@@ -179,12 +184,14 @@ struct BodyStatsView: View {
                                 .tint(CaloTheme.coral)
                             }
                             .padding(16)
+                            .frame(height: 72)
                             .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                                     .stroke(CaloTheme.cardBorder, lineWidth: 0.5)
                             )
                         }
+                        .animation(nil, value: targetWeightKg)
                         .transition(.opacity)
                     }
                 }
@@ -210,6 +217,7 @@ struct BodyStatsView: View {
             }
         }
         .scrollIndicators(.hidden)
+        .scrollDismissesKeyboard(.interactively)
         .background(Color.black.ignoresSafeArea())
     }
 }
@@ -237,6 +245,7 @@ private struct GenderButton: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .stroke(isSelected ? CaloTheme.coral : CaloTheme.cardBorder, lineWidth: isSelected ? 1.5 : 0.5)
             )
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }

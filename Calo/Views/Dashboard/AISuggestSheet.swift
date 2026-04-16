@@ -10,6 +10,8 @@ struct AISuggestSheet: View {
     @State private var suggestions: [GeminiService.MealSuggestion] = []
     @State private var isLoading = true
     @State private var errorMessage: String?
+    @State private var selectedSuggestion: GeminiService.MealSuggestion?
+    @State private var showLoggedAlert = false
 
     private var settings: UserSettings? { allSettings.first }
 
@@ -55,9 +57,22 @@ struct AISuggestSheet: View {
                                 .padding(.top, 8)
 
                             ForEach(suggestions) { suggestion in
-                                SuggestionCard(suggestion: suggestion) {
-                                    logSuggestion(suggestion)
-                                }
+                                SuggestionCard(
+                                    suggestion: suggestion,
+                                    isExpanded: selectedSuggestion?.id == suggestion.id,
+                                    onTap: {
+                                        withAnimation(.easeInOut(duration: 0.25)) {
+                                            if selectedSuggestion?.id == suggestion.id {
+                                                selectedSuggestion = nil
+                                            } else {
+                                                selectedSuggestion = suggestion
+                                            }
+                                        }
+                                    },
+                                    onLog: {
+                                        logSuggestion(suggestion)
+                                    }
+                                )
                             }
                         }
                         .padding(.horizontal, 20)
@@ -73,6 +88,11 @@ struct AISuggestSheet: View {
                     Button("Done") { dismiss() }
                         .foregroundStyle(CaloTheme.coral)
                 }
+            }
+            .alert("Logged!", isPresented: $showLoggedAlert) {
+                Button("OK") { dismiss() }
+            } message: {
+                Text("Meal added to your daily log.")
             }
         }
         .task { loadSuggestions() }
@@ -120,63 +140,89 @@ struct AISuggestSheet: View {
         )
         modelContext.insert(entry)
         HapticManager.success()
-        dismiss()
+        showLoggedAlert = true
     }
 }
 
 private struct SuggestionCard: View {
     let suggestion: GeminiService.MealSuggestion
+    let isExpanded: Bool
+    let onTap: () -> Void
     let onLog: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(suggestion.emoji)
-                    .font(.system(size: 28))
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text(suggestion.emoji)
+                        .font(.system(size: 32))
 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(suggestion.name)
-                        .font(.headline)
-                        .foregroundStyle(.white)
-                    Text(suggestion.description)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(suggestion.name)
+                            .font(.headline)
+                            .foregroundStyle(.white)
+                        Text(suggestion.description)
+                            .font(.caption)
+                            .foregroundStyle(CaloTheme.subtleText)
+                            .lineLimit(isExpanded ? nil : 2)
+                    }
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
                         .font(.caption)
                         .foregroundStyle(CaloTheme.subtleText)
-                        .lineLimit(2)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }
-                Spacer()
-            }
 
-            HStack {
-                Text("\(suggestion.estimated_calories) cal")
-                    .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(CaloTheme.coral)
-                Text("·")
-                    .foregroundStyle(CaloTheme.subtleText)
-                Text("\(suggestion.estimated_protein)g protein")
-                    .font(.subheadline)
-                    .foregroundStyle(CaloTheme.accentGreen)
+                // Macro info
+                HStack(spacing: 12) {
+                    SuggestMacroPill(label: "\(suggestion.estimated_calories) cal", color: CaloTheme.coral)
+                    SuggestMacroPill(label: "\(suggestion.estimated_protein)g protein", color: CaloTheme.accentGreen)
+                }
 
-                Spacer()
+                if isExpanded {
+                    Divider().background(CaloTheme.cardBorder)
 
-                Button {
-                    HapticManager.mediumImpact()
-                    onLog()
-                } label: {
-                    Text("Log it")
-                        .font(.caption.weight(.semibold))
+                    Button {
+                        HapticManager.mediumImpact()
+                        onLog()
+                    } label: {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Log This Meal")
+                                .font(.subheadline.weight(.semibold))
+                        }
                         .foregroundStyle(.white)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 8)
-                        .background(CaloTheme.coral, in: Capsule())
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(CaloTheme.coral, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
-                .buttonStyle(.plain)
             }
+            .padding(16)
+            .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(isExpanded ? CaloTheme.coral.opacity(0.5) : CaloTheme.cardBorder, lineWidth: isExpanded ? 1 : 0.5)
+            )
+            .contentShape(Rectangle())
         }
-        .padding(16)
-        .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(CaloTheme.cardBorder, lineWidth: 0.5)
-        )
+        .buttonStyle(.plain)
+    }
+}
+
+private struct SuggestMacroPill: View {
+    let label: String
+    let color: Color
+
+    var body: some View {
+        Text(label)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(color)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(color.opacity(0.12), in: Capsule())
     }
 }

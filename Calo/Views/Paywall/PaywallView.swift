@@ -240,6 +240,7 @@ private struct PackageButton: View {
             .frame(maxWidth: .infinity)
             .background(CaloTheme.coral, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             .shadow(color: CaloTheme.coral.opacity(0.4), radius: 8, y: 4)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .disabled(isPurchasing)

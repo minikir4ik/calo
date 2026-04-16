@@ -5,7 +5,7 @@ import SwiftData
 final class FoodEntry {
     var id: UUID
     var foodName: String
-    var emoji: String
+    var emoji: String?
     var calories: Double
     var protein: Double
     var carbs: Double
@@ -20,7 +20,7 @@ final class FoodEntry {
 
     init(
         foodName: String,
-        emoji: String = "",
+        emoji: String? = nil,
         calories: Double,
         protein: Double,
         carbs: Double,

@@ -389,6 +389,7 @@ private struct QuickActionButton: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .stroke(CaloTheme.cardBorder, lineWidth: 0.5)
             )
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
@@ -407,12 +408,12 @@ private struct MealCard: View {
                         .scaledToFill()
                         .frame(width: 100, height: 56)
                         .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                } else if !entry.emoji.isEmpty {
+                } else if let emoji = entry.emoji, !emoji.isEmpty {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)
                         .fill(CaloTheme.coral.opacity(0.1))
                         .frame(width: 100, height: 56)
                         .overlay(
-                            Text(entry.emoji).font(.system(size: 28))
+                            Text(emoji).font(.system(size: 28))
                         )
                 } else {
                     RoundedRectangle(cornerRadius: 8, style: .continuous)

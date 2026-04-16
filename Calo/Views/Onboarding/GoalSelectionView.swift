@@ -5,10 +5,11 @@ struct GoalSelectionView: View {
     let onContinue: () -> Void
 
     private let goals: [(id: String, title: String, subtitle: String, icon: String)] = [
-        ("lose_fat", "Lose fat", "Burn fat, keep muscle", "arrow.down.circle.fill"),
-        ("build_muscle", "Build muscle", "Gain strength and size", "figure.strengthtraining.traditional"),
-        ("maintain", "Stay healthy", "Maintain your physique", "heart.fill"),
-        ("performance", "Peak performance", "Fuel your training", "bolt.fill")
+        ("lose_fat", "Lose Fat", "Shed body fat while preserving muscle", "flame.fill"),
+        ("build_muscle", "Build Muscle", "Gain lean mass and strength", "dumbbell.fill"),
+        ("eat_healthier", "Eat Healthier", "Improve nutrition and energy", "leaf.fill"),
+        ("maintain", "Stay Fit", "Maintain your current shape", "heart.fill"),
+        ("performance", "Boost Performance", "Fuel athletic performance", "bolt.fill")
     ]
 
     var body: some View {
@@ -19,9 +20,9 @@ struct GoalSelectionView: View {
                 .font(.system(size: 28, weight: .bold))
                 .foregroundStyle(.white)
 
-            Spacer().frame(height: 32)
+            Spacer().frame(height: 28)
 
-            VStack(spacing: 12) {
+            VStack(spacing: 10) {
                 ForEach(goals, id: \.id) { goal in
                     GoalCard(
                         title: goal.title,
@@ -75,9 +76,9 @@ private struct GoalCard: View {
         Button(action: action) {
             HStack(spacing: 16) {
                 Image(systemName: icon)
-                    .font(.system(size: 24))
+                    .font(.system(size: 22))
                     .foregroundStyle(isSelected ? CaloTheme.coral : .white.opacity(0.5))
-                    .frame(width: 44, height: 44)
+                    .frame(width: 42, height: 42)
                     .background(
                         Circle()
                             .fill(isSelected ? CaloTheme.coral.opacity(0.15) : CaloTheme.cardBackground)
@@ -100,12 +101,14 @@ private struct GoalCard: View {
                         .font(.title3)
                 }
             }
-            .padding(16)
+            .padding(14)
             .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .stroke(isSelected ? CaloTheme.coral : CaloTheme.cardBorder, lineWidth: isSelected ? 1.5 : 0.5)
             )
+            .scaleEffect(isSelected ? 1.02 : 1.0)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }

@@ -9,12 +9,24 @@ struct CaloApp: App {
     @StateObject private var premiumManager: PremiumManager
 
     init() {
+        let schema = Schema([FoodEntry.self, UserSettings.self, OnboardingData.self])
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
-            let schema = Schema([FoodEntry.self, UserSettings.self, OnboardingData.self])
-            let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
             container = try ModelContainer(for: schema, configurations: [config])
         } catch {
-            fatalError("SwiftData container failed to initialize: \(error.localizedDescription)")
+            // Migration failed — delete old store and recreate
+            let url = config.url
+            try? FileManager.default.removeItem(at: url)
+            // Also remove journal/wal files
+            let walURL = url.deletingPathExtension().appendingPathExtension("store-wal")
+            let shmURL = url.deletingPathExtension().appendingPathExtension("store-shm")
+            try? FileManager.default.removeItem(at: walURL)
+            try? FileManager.default.removeItem(at: shmURL)
+            do {
+                container = try ModelContainer(for: schema, configurations: [config])
+            } catch {
+                fatalError("SwiftData container failed to initialize after reset: \(error.localizedDescription)")
+            }
         }
 
         // Sentry

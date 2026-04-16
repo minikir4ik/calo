@@ -11,7 +11,7 @@ struct WelcomeView: View {
 
     var body: some View {
         ZStack {
-            CaloTheme.background.ignoresSafeArea()
+            Color.black.ignoresSafeArea()
 
             // Subtle particle dots
             Canvas { context, size in
@@ -41,15 +41,15 @@ struct WelcomeView: View {
                 // Logo
                 ZStack {
                     Circle()
-                        .fill(CaloTheme.coral.opacity(0.12))
-                        .frame(width: 140, height: 140)
-                        .blur(radius: 20)
+                        .fill(CaloTheme.coral.opacity(0.15))
+                        .frame(width: 160, height: 160)
+                        .blur(radius: 25)
 
                     Image(systemName: "flame.fill")
-                        .font(.system(size: 72))
+                        .font(.system(size: 80))
                         .foregroundStyle(
                             LinearGradient(
-                                colors: [CaloTheme.coral, CaloTheme.coral.opacity(0.7)],
+                                colors: [CaloTheme.coral, CaloTheme.coral.opacity(0.8)],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -58,19 +58,23 @@ struct WelcomeView: View {
                 .scaleEffect(logoScale)
                 .opacity(logoOpacity)
 
-                Spacer().frame(height: 40)
+                Spacer().frame(height: 32)
 
-                // Text
-                VStack(spacing: 12) {
-                    Text("Master your biology")
-                        .font(.system(size: 32, weight: .bold, design: .default))
-                        .foregroundStyle(.white)
+                // App name
+                Text("Calo")
+                    .font(.system(size: 48, weight: .bold, design: .default))
+                    .foregroundStyle(.white)
+                    .opacity(textOpacity)
 
-                    Text("AI-powered nutrition that adapts to you")
-                        .font(.subheadline)
-                        .foregroundStyle(CaloTheme.subtleText)
-                }
-                .opacity(textOpacity)
+                Spacer().frame(height: 12)
+
+                // Subtitle
+                Text("AI-powered nutrition that adapts to you")
+                    .font(.title3)
+                    .foregroundStyle(.white.opacity(0.9))
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 40)
+                    .opacity(textOpacity)
 
                 Spacer()
 
@@ -83,7 +87,7 @@ struct WelcomeView: View {
                         .font(.headline)
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
+                        .padding(.vertical, 18)
                         .background(CaloTheme.coral, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                         .shadow(color: CaloTheme.coral.opacity(0.4), radius: 16, y: 6)
                 }

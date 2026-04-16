@@ -220,8 +220,8 @@ struct FoodEntryRow: View {
     var body: some View {
         HStack(spacing: 12) {
             // Food emoji or icon
-            if !entry.emoji.isEmpty {
-                Text(entry.emoji)
+            if let emoji = entry.emoji, !emoji.isEmpty {
+                Text(emoji)
                     .font(.system(size: 24))
                     .frame(width: 36, height: 36)
             } else {
