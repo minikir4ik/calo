@@ -7,6 +7,8 @@ struct DashboardView: View {
     @Query private var allSettings: [UserSettings]
     @Query(sort: \FoodEntry.timestamp, order: .reverse) private var allEntries: [FoodEntry]
 
+    var onSeeAllMeals: (() -> Void)?
+
     @State private var showScanSheet = false
     @State private var showPaywall = false
     @State private var showWaterSheet = false
@@ -238,9 +240,15 @@ struct DashboardView: View {
                     .foregroundStyle(.white)
                 Spacer()
                 if !todayEntries.isEmpty {
-                    Text("See All")
-                        .font(.caption.weight(.medium))
-                        .foregroundStyle(CaloTheme.coral)
+                    Button {
+                        HapticManager.lightImpact()
+                        onSeeAllMeals?()
+                    } label: {
+                        Text("See All")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(CaloTheme.coral)
+                    }
+                    .buttonStyle(.plain)
                 }
             }
 

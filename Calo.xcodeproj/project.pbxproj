@@ -19,6 +19,8 @@
 		A06D79F6C84E21D982BFECFA /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30555CDA31294C9E1D4BE9FA /* CameraView.swift */; };
 		A436559CBD31B28F5FA44591 /* CaloApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C587ABD4FF4BA9EB33671932 /* CaloApp.swift */; };
 		ABDF4779AD23492D75AC591C /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F7EF15CE3DB091EBF0B86B5 /* Extensions.swift */; };
+		AF0774142F92373A0073B23B /* CachedFood.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0774132F9237390073B23B /* CachedFood.swift */; };
+		AF0774162F92375E0073B23B /* LocalFoodDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0774152F92375E0073B23B /* LocalFoodDatabase.swift */; };
 		AF25FC8A2F9118AE00097784 /* NameInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF25FC892F9118AE00097784 /* NameInputView.swift */; };
 		AF25FC8C2F91190900097784 /* WaterLogSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF25FC8B2F91190900097784 /* WaterLogSheet.swift */; };
 		AF25FC8E2F91191F00097784 /* AISuggestSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF25FC8D2F91191F00097784 /* AISuggestSheet.swift */; };
@@ -63,6 +65,8 @@
 		9F88BEDA307D505154C9E230 /* ScanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanView.swift; sourceTree = "<group>"; };
 		A280F4E9D9FBD1B30ED09044 /* USDAService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = USDAService.swift; sourceTree = "<group>"; };
 		A3BB3968995A15195DD353B9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AF0774132F9237390073B23B /* CachedFood.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedFood.swift; sourceTree = "<group>"; };
+		AF0774152F92375E0073B23B /* LocalFoodDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalFoodDatabase.swift; sourceTree = "<group>"; };
 		AF25FC892F9118AE00097784 /* NameInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameInputView.swift; sourceTree = "<group>"; };
 		AF25FC8B2F91190900097784 /* WaterLogSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WaterLogSheet.swift; sourceTree = "<group>"; };
 		AF25FC8D2F91191F00097784 /* AISuggestSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AISuggestSheet.swift; sourceTree = "<group>"; };
@@ -121,6 +125,7 @@
 				5AF28CF13FDD578C73BAE7F2 /* FoodEntry.swift */,
 				9EF148C0D27872EED14FD1A2 /* UserSettings.swift */,
 				AFDBE6822F9102B2004E2BF4 /* OnboardingData.swift */,
+				AF0774132F9237390073B23B /* CachedFood.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -174,6 +179,7 @@
 				A280F4E9D9FBD1B30ED09044 /* USDAService.swift */,
 				AF6FF5952F8E53FC00B08026 /* PremiumManager.swift */,
 				AFDBE69A2F910384004E2BF4 /* DashboardIntelligenceService.swift */,
+				AF0774152F92375E0073B23B /* LocalFoodDatabase.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -363,6 +369,7 @@
 				AFDBE68D2F9102F9004E2BF4 /* ActivityLevelView.swift in Sources */,
 				08DD03A8EC982DCE18A51463 /* FoodAnalysisService.swift in Sources */,
 				AFDBE6992F91036B004E2BF4 /* OnboardingFlowView.swift in Sources */,
+				AF0774162F92375E0073B23B /* LocalFoodDatabase.swift in Sources */,
 				667DED63CF251D9F9614E61A /* FoodEntry.swift in Sources */,
 				AFDBE6852F9102B3004E2BF4 /* TDEECalculator.swift in Sources */,
 				AFDBE6932F910345004E2BF4 /* CalculationView.swift in Sources */,
@@ -379,6 +386,7 @@
 				AFDBE6952F910346004E2BF4 /* DemoView.swift in Sources */,
 				AF25FC8E2F91191F00097784 /* AISuggestSheet.swift in Sources */,
 				42123B79450D8A8117426972 /* SettingsView.swift in Sources */,
+				AF0774142F92373A0073B23B /* CachedFood.swift in Sources */,
 				DF063768F94BD4EAE714BE01 /* USDAService.swift in Sources */,
 				0209512F8170C51DE2D1FAEC /* UserSettings.swift in Sources */,
 				AF25FC8C2F91190900097784 /* WaterLogSheet.swift in Sources */,

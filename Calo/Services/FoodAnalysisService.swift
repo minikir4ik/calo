@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 struct AnalyzedFood: Identifiable {
     let id = UUID()
@@ -27,8 +28,40 @@ struct AnalysisResult {
 }
 
 struct FoodAnalysisService {
-    /// Full pipeline: Gemini identification → USDA verification → final nutrients
-    static func analyze(description: String, imageData: Data?) async throws -> AnalysisResult {
+    /// Full pipeline: Local cache → Gemini → USDA verification → cache result
+    @MainActor
+    static func analyze(description: String, imageData: Data?, context: ModelContext? = nil) async throws -> AnalysisResult {
+        // For text-only single-food queries, check local cache first
+        if imageData == nil, let context = context {
+            let query = description.trimmingCharacters(in: .whitespaces)
+            if let cached = LocalFoodDatabase.lookup(query: query, context: context) {
+                let food = AnalyzedFood(
+                    name: cleanFoodName(cached.foodName),
+                    calories: cached.calories,
+                    protein: cached.protein,
+                    carbs: cached.carbs,
+                    fat: cached.fat,
+                    grams: cached.grams,
+                    confidence: 0.95,
+                    verified: cached.verified
+                )
+                let componentData = [FoodEntry.Component(
+                    name: food.name, calories: food.calories,
+                    protein: food.protein, carbs: food.carbs,
+                    fat: food.fat, grams: food.grams
+                )]
+                let componentsJSON = try? String(data: JSONEncoder().encode(componentData), encoding: .utf8)
+                return AnalysisResult(
+                    mealName: food.name,
+                    emoji: cached.emoji,
+                    foods: [food],
+                    confidence: 0.95,
+                    componentsJSON: componentsJSON
+                )
+            }
+        }
+
+        // Gemini analysis (with retry built into GeminiService)
         let geminiMeal = try await GeminiService.analyze(description: description, imageData: imageData)
 
         var foods: [AnalyzedFood] = []
@@ -47,6 +80,20 @@ struct FoodAnalysisService {
                     confidence: geminiMeal.confidence,
                     verified: true
                 ))
+            } else if let context = context,
+                      let cached = LocalFoodDatabase.lookup(query: component.name, context: context) {
+                // Fallback to local cache
+                let multiplier = component.grams / cached.grams
+                foods.append(AnalyzedFood(
+                    name: cleanFoodName(component.name),
+                    calories: (cached.calories * multiplier).rounded(to: 1),
+                    protein: (cached.protein * multiplier).rounded(to: 1),
+                    carbs: (cached.carbs * multiplier).rounded(to: 1),
+                    fat: (cached.fat * multiplier).rounded(to: 1),
+                    grams: component.grams,
+                    confidence: geminiMeal.confidence,
+                    verified: cached.verified
+                ))
             } else {
                 // Fallback to Gemini estimates
                 foods.append(AnalyzedFood(
@@ -59,6 +106,23 @@ struct FoodAnalysisService {
                     confidence: geminiMeal.confidence,
                     verified: false
                 ))
+            }
+        }
+
+        // Cache each analyzed food for future lookups
+        if let context = context {
+            for food in foods {
+                LocalFoodDatabase.cache(
+                    name: food.name,
+                    calories: food.calories,
+                    protein: food.protein,
+                    carbs: food.carbs,
+                    fat: food.fat,
+                    grams: food.grams,
+                    emoji: geminiMeal.emoji,
+                    verified: food.verified,
+                    context: context
+                )
             }
         }
 

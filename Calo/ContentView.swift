@@ -38,7 +38,7 @@ struct ContentView: View {
 
     private var mainTabView: some View {
         TabView(selection: $selectedTab) {
-            DashboardView()
+            DashboardView(onSeeAllMeals: { selectedTab = .log })
                 .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(Tab.home)
 
@@ -86,5 +86,6 @@ struct ContentView: View {
         if allOnboarding.isEmpty {
             modelContext.insert(OnboardingData())
         }
+        LocalFoodDatabase.preloadIfNeeded(context: modelContext)
     }
 }

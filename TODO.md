@@ -135,6 +135,17 @@
 - [x] Haptics on tab switch, scan open, date selection, entry expand
 - [x] Build: 0 errors, 0 warnings
 
+## Session 3.5: Quick Fixes + Local Food Database
+- [x] Dashboard "See All" button: wired to switch to Log tab via onSeeAllMeals closure
+- [x] CachedFood SwiftData model: @Attribute(.unique) foodName, macros, emoji, verified, lookupCount
+- [x] LocalFoodDatabase: lookup (exact + fuzzy), cache, preloadIfNeeded with 50 USDA-accurate common foods
+- [x] CaloApp schema updated to include CachedFood.self
+- [x] ContentView ensureData() calls LocalFoodDatabase.preloadIfNeeded()
+- [x] FoodAnalysisService: local cache check before Gemini, local fallback after USDA, caches results after analysis
+- [x] ScanView: rotating loading messages ("Analyzing your meal...", "Cross-referencing nutrition data...", etc.)
+- [x] @MainActor annotations on LocalFoodDatabase methods for SwiftData thread safety
+- [x] Build: 0 errors, 0 warnings
+
 ## Phase 6 TODO
 - [ ] Archive build in Xcode
 - [ ] Upload to App Store Connect

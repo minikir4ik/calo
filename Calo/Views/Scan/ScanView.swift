@@ -16,8 +16,17 @@ struct ScanView: View {
     @State private var showPaywall = false
     @State private var foodDescription = ""
     @State private var pulseAmount: CGFloat = 1.0
+    @State private var loadingMessageIndex = 0
 
     private var settings: UserSettings? { allSettings.first }
+
+    private let loadingMessages = [
+        "Analyzing your meal...",
+        "Cross-referencing nutrition data...",
+        "Calculating your macros...",
+        "Verifying with USDA database...",
+        "Almost there..."
+    ]
 
     var body: some View {
         ZStack {
@@ -71,6 +80,18 @@ struct ScanView: View {
                 .padding(.top, 12)
 
                 Spacer().frame(height: 16)
+
+                // Loading message
+                if isAnalyzing {
+                    Text(loadingMessages[loadingMessageIndex])
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(CaloTheme.coral.opacity(0.9))
+                        .padding(.horizontal, 20)
+                        .padding(.bottom, 4)
+                        .transition(.opacity)
+                        .id("loading-\(loadingMessageIndex)")
+                        .animation(.easeInOut(duration: 0.3), value: loadingMessageIndex)
+                }
 
                 // Error
                 if let errorMessage {
@@ -206,24 +227,38 @@ struct ScanView: View {
         let description = foodDescription.isEmpty ? "Identify this food" : foodDescription
         isAnalyzing = true
         errorMessage = nil
+        loadingMessageIndex = 0
         pulseAmount = 2.0
+
+        // Rotate loading messages every 2.5 seconds
+        let messageTimer = Task {
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: 2_500_000_000)
+                guard !Task.isCancelled else { break }
+                await MainActor.run {
+                    withAnimation {
+                        loadingMessageIndex = (loadingMessageIndex + 1) % loadingMessages.count
+                    }
+                }
+            }
+        }
+
         Task {
             do {
                 let result = try await FoodAnalysisService.analyze(
                     description: description,
-                    imageData: imageData
+                    imageData: imageData,
+                    context: modelContext
                 )
-                await MainActor.run {
-                    premiumManager.recordScan()
-                    analysisResult = result
-                    isAnalyzing = false
-                    showResult = true
-                }
+                messageTimer.cancel()
+                premiumManager.recordScan()
+                analysisResult = result
+                isAnalyzing = false
+                showResult = true
             } catch {
-                await MainActor.run {
-                    isAnalyzing = false
-                    errorMessage = error.localizedDescription
-                }
+                messageTimer.cancel()
+                isAnalyzing = false
+                errorMessage = error.localizedDescription
             }
         }
     }

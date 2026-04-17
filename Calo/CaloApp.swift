@@ -9,7 +9,7 @@ struct CaloApp: App {
     @StateObject private var premiumManager: PremiumManager
 
     init() {
-        let schema = Schema([FoodEntry.self, UserSettings.self, OnboardingData.self])
+        let schema = Schema([FoodEntry.self, UserSettings.self, OnboardingData.self, CachedFood.self])
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
             container = try ModelContainer(for: schema, configurations: [config])

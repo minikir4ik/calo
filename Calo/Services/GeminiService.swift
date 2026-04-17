@@ -25,12 +25,14 @@ enum GeminiError: LocalizedError {
     case noApiKey
     case invalidResponse
     case httpError(Int)
+    case serverBusy
 
     var errorDescription: String? {
         switch self {
         case .noApiKey: return "Gemini API key not configured"
         case .invalidResponse: return "Could not parse Gemini response"
         case .httpError(let code): return "Gemini API error (HTTP \(code))"
+        case .serverBusy: return "Gemini is busy — please try again in a moment"
         }
     }
 }
@@ -100,29 +102,7 @@ struct GeminiService {
             ]
         ]
 
-        var request = URLRequest(url: URL(string: "\(endpoint)?key=\(apiKey)")!)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        request.timeoutInterval = 30
-
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse else {
-            throw GeminiError.invalidResponse
-        }
-
-        guard httpResponse.statusCode == 200 else {
-            throw GeminiError.httpError(httpResponse.statusCode)
-        }
-
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        guard let candidates = json?["candidates"] as? [[String: Any]],
-              let content = candidates.first?["content"] as? [String: Any],
-              let responseParts = content["parts"] as? [[String: Any]],
-              let text = responseParts.first?["text"] as? String else {
-            throw GeminiError.invalidResponse
-        }
+        let text = try await sendRequest(body: body, apiKey: apiKey)
 
         guard let textData = text.data(using: .utf8) else {
             throw GeminiError.invalidResponse
@@ -180,28 +160,61 @@ struct GeminiService {
             ]
         ]
 
-        var request = URLRequest(url: URL(string: "\(endpoint)?key=\(apiKey)")!)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        request.timeoutInterval = 30
+        let text = try await sendRequest(body: body, apiKey: apiKey)
 
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw GeminiError.invalidResponse
-        }
-
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        guard let candidates = json?["candidates"] as? [[String: Any]],
-              let content = candidates.first?["content"] as? [String: Any],
-              let responseParts = content["parts"] as? [[String: Any]],
-              let text = responseParts.first?["text"] as? String,
-              let textData = text.data(using: .utf8) else {
+        guard let textData = text.data(using: .utf8) else {
             throw GeminiError.invalidResponse
         }
 
         let suggestionsResponse = try JSONDecoder().decode(SuggestionsResponse.self, from: textData)
         return suggestionsResponse.suggestions
+    }
+
+    // MARK: - Shared Request with Retry
+
+    private static func sendRequest(body: [String: Any], apiKey: String, maxRetries: Int = 3) async throws -> String {
+        var lastError: Error = GeminiError.invalidResponse
+
+        for attempt in 0..<maxRetries {
+            if attempt > 0 {
+                // Exponential backoff: 1s, 2s, 4s
+                let delay = UInt64(pow(2.0, Double(attempt - 1))) * 1_000_000_000
+                try await Task.sleep(nanoseconds: delay)
+            }
+
+            var request = URLRequest(url: URL(string: "\(endpoint)?key=\(apiKey)")!)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = try JSONSerialization.data(withJSONObject: body)
+            request.timeoutInterval = 30
+
+            let (data, response) = try await URLSession.shared.data(for: request)
+
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw GeminiError.invalidResponse
+            }
+
+            // Retry on 503 (overloaded), 429 (rate limit), 500 (server error)
+            if [503, 429, 500].contains(httpResponse.statusCode) {
+                lastError = GeminiError.serverBusy
+                continue
+            }
+
+            guard httpResponse.statusCode == 200 else {
+                throw GeminiError.httpError(httpResponse.statusCode)
+            }
+
+            let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            guard let candidates = json?["candidates"] as? [[String: Any]],
+                  let content = candidates.first?["content"] as? [String: Any],
+                  let responseParts = content["parts"] as? [[String: Any]],
+                  let text = responseParts.first?["text"] as? String else {
+                throw GeminiError.invalidResponse
+            }
+
+            return text
+        }
+
+        throw lastError
     }
 }
