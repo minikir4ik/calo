@@ -32,13 +32,16 @@ enum GeminiError: LocalizedError {
         case .noApiKey: return "Gemini API key not configured"
         case .invalidResponse: return "Could not parse Gemini response"
         case .httpError(let code): return "Gemini API error (HTTP \(code))"
-        case .serverBusy: return "Gemini is busy — please try again in a moment"
+        case .serverBusy: return "AI is temporarily unavailable — tap to retry"
         }
     }
 }
 
 struct GeminiService {
-    private static let endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+    // 2.5-flash for food analysis (needs vision + reasoning)
+    private static let analysisEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+    // 2.5-flash-lite for text-only suggestions (fast, cheap)
+    private static let suggestEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent"
 
     private static let imagePrompt = """
     You are a precise food identification system. Analyze the food photo and description.
@@ -102,7 +105,7 @@ struct GeminiService {
             ]
         ]
 
-        let text = try await sendRequest(body: body, apiKey: apiKey)
+        let text = try await sendRequest(body: body, apiKey: apiKey, endpoint: analysisEndpoint, timeout: 30)
 
         guard let textData = text.data(using: .utf8) else {
             throw GeminiError.invalidResponse
@@ -142,25 +145,24 @@ struct GeminiService {
             throw GeminiError.noApiKey
         }
 
-        let prompt = """
-        Based on today's intake so far: \(Int(currentCalories)) calories, \(Int(currentProtein))g protein, \(Int(currentCarbs))g carbs, \(Int(currentFat))g fat.
-        Daily goals: \(targetCalories) calories, \(targetProtein)g protein, \(targetCarbs)g carbs, \(targetFat)g fat.
+        let remaining = targetCalories - Int(currentCalories)
+        let remainingP = targetProtein - Int(currentProtein)
 
-        Suggest 3 specific, practical meal ideas for their next meal that would help balance their remaining macros. Be specific (e.g. "Grilled Salmon with Quinoa" not just "fish").
+        let prompt = "Eaten: \(Int(currentCalories))cal \(Int(currentProtein))p \(Int(currentCarbs))c \(Int(currentFat))f. Goal: \(targetCalories)cal \(targetProtein)p. Need ~\(remaining)cal \(remainingP)p more. Suggest 3 meals. JSON only: {\"suggestions\":[{\"name\":\"...\",\"description\":\"short\",\"estimated_calories\":0,\"estimated_protein\":0,\"emoji\":\"🍽\"}]}"
 
-        Return ONLY valid JSON:
-        {"suggestions": [{"name": "Grilled Salmon Bowl", "description": "Salmon fillet over quinoa with steamed broccoli", "estimated_calories": 480, "estimated_protein": 38, "emoji": "🐟"}]}
-        """
+        let keyPrefix = String(apiKey.prefix(10))
+        print("🤖 AI Suggest: key=\(keyPrefix)..., prompt=\(prompt.count) chars, starting at \(Date())")
 
         let body: [String: Any] = [
             "contents": [["parts": [["text": prompt]]]],
             "generationConfig": [
                 "responseMimeType": "application/json",
-                "temperature": 0.7
+                "temperature": 0.8
             ]
         ]
 
-        let text = try await sendRequest(body: body, apiKey: apiKey)
+        let text = try await sendRequest(body: body, apiKey: apiKey, endpoint: suggestEndpoint, timeout: 15)
+        print("🤖 AI Suggest: response received at \(Date())")
 
         guard let textData = text.data(using: .utf8) else {
             throw GeminiError.invalidResponse
@@ -172,21 +174,22 @@ struct GeminiService {
 
     // MARK: - Shared Request with Retry
 
-    private static func sendRequest(body: [String: Any], apiKey: String, maxRetries: Int = 3) async throws -> String {
+    private static func sendRequest(body: [String: Any], apiKey: String, endpoint: String? = nil, timeout: TimeInterval = 30, maxRetries: Int = 3) async throws -> String {
+        let url = endpoint ?? analysisEndpoint
         var lastError: Error = GeminiError.invalidResponse
 
         for attempt in 0..<maxRetries {
             if attempt > 0 {
-                // Exponential backoff: 1s, 2s, 4s
+                // Exponential backoff: 1s, 2s
                 let delay = UInt64(pow(2.0, Double(attempt - 1))) * 1_000_000_000
                 try await Task.sleep(nanoseconds: delay)
             }
 
-            var request = URLRequest(url: URL(string: "\(endpoint)?key=\(apiKey)")!)
+            var request = URLRequest(url: URL(string: "\(url)?key=\(apiKey)")!)
             request.httpMethod = "POST"
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpBody = try JSONSerialization.data(withJSONObject: body)
-            request.timeoutInterval = 30
+            request.timeoutInterval = timeout
 
             let (data, response) = try await URLSession.shared.data(for: request)
 
@@ -201,6 +204,8 @@ struct GeminiService {
             }
 
             guard httpResponse.statusCode == 200 else {
+                let errorBody = String(data: data, encoding: .utf8) ?? "no body"
+                print("⚠️ Gemini HTTP \(httpResponse.statusCode): \(errorBody)")
                 throw GeminiError.httpError(httpResponse.statusCode)
             }
 
