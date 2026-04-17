@@ -166,12 +166,6 @@ struct ScanView: View {
         }
         .preferredColorScheme(.dark)
         .onTapGesture { hideKeyboard() }
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Done") { hideKeyboard() }
-            }
-        }
         .onAppear {
             if isAnalyzing { pulseAmount = 2.0 }
         }

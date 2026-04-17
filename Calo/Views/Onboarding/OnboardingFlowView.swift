@@ -31,7 +31,7 @@ struct OnboardingFlowView: View {
 
     var body: some View {
         ZStack {
-            CaloTheme.background.ignoresSafeArea()
+            Color.black.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Progress bar + back button

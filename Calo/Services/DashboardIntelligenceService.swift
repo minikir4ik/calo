@@ -4,12 +4,13 @@ import SwiftData
 enum DashboardIntelligenceService {
 
     struct Insight {
-        let title: String
-        let subtitle: String
+        let message: String
+        let icon: String
     }
 
     static func getDailyInsight(
         entries: [FoodEntry],
+        name: String?,
         calorieGoal: Int,
         proteinGoal: Int,
         carbsGoal: Int,
@@ -20,18 +21,19 @@ enum DashboardIntelligenceService {
         let totalCarbs = entries.reduce(0.0) { $0 + $1.carbs }
 
         let hour = Calendar.current.component(.hour, from: .now)
+        let displayName = (name != nil && !name!.isEmpty) ? ", \(name!)" : ""
 
         // No entries yet
         if entries.isEmpty {
             if hour < 11 {
                 return Insight(
-                    title: "Scan your first meal to get started",
-                    subtitle: "Your personalized tracking begins now"
+                    message: "Start your day right\(displayName) — scan your first meal",
+                    icon: "sunrise.fill"
                 )
             } else {
                 return Insight(
-                    title: "No meals logged yet today",
-                    subtitle: "Scan something to start tracking"
+                    message: "No meals logged yet today — scan something to start tracking",
+                    icon: "fork.knife"
                 )
             }
         }
@@ -39,35 +41,45 @@ enum DashboardIntelligenceService {
         let calRemaining = Double(calorieGoal) - totalCal
         let proteinRemaining = Double(proteinGoal) - totalProtein
 
+        // All goals met
+        if totalCal >= Double(calorieGoal) * 0.9 &&
+           totalCal <= Double(calorieGoal) * 1.1 &&
+           totalProtein >= Double(proteinGoal) * 0.85 {
+            return Insight(
+                message: "Goals complete! Amazing day\(displayName)",
+                icon: "party.popper.fill"
+            )
+        }
+
         // Over budget
         if calRemaining < -200 {
             return Insight(
-                title: "You're \(Int(-calRemaining)) cal over target",
-                subtitle: "Consider lighter meals for the rest of the day"
+                message: "You're \(Int(-calRemaining)) cal over target — consider a lighter dinner",
+                icon: "flame.fill"
             )
         }
 
         // Evening — close to target
         if hour >= 18 && calRemaining > 0 && calRemaining < 400 {
             return Insight(
-                title: "Almost there — \(Int(calRemaining)) cal to go",
-                subtitle: "A light snack will close out the day"
+                message: "Almost there — \(Int(calRemaining)) cal to go",
+                icon: "checkmark.circle"
             )
         }
 
         // Protein focused
         if proteinRemaining > 40 {
             return Insight(
-                title: "Need \(Int(proteinRemaining))g more protein today",
-                subtitle: "Try chicken, eggs, or Greek yogurt"
+                message: "You need \(Int(proteinRemaining))g more protein today",
+                icon: "bolt.fill"
             )
         }
 
         // Good deficit
         if calRemaining > 300 && hour >= 14 {
             return Insight(
-                title: "You're \(Int(calRemaining)) cal under target",
-                subtitle: "Good deficit day — keep it going"
+                message: "You're \(Int(calRemaining)) cal under target — keep it going",
+                icon: "arrow.down.right"
             )
         }
 
@@ -75,15 +87,15 @@ enum DashboardIntelligenceService {
         let carbsRemaining = Double(carbsGoal) - totalCarbs
         if carbsRemaining > Double(carbsGoal) * 0.6 && entries.count >= 2 {
             return Insight(
-                title: "Low on carbs — \(Int(carbsRemaining))g remaining",
-                subtitle: "Great if you're doing low-carb, otherwise fuel up"
+                message: "Low on carbs — \(Int(carbsRemaining))g remaining",
+                icon: "leaf.fill"
             )
         }
 
-        // Default
+        // Default — on track
         return Insight(
-            title: "\(Int(totalCal)) cal logged — \(Int(calRemaining)) remaining",
-            subtitle: "You're on track for the day"
+            message: "You're crushing it today — \(Int(calRemaining)) cal to go",
+            icon: "sparkles"
         )
     }
 
@@ -107,6 +119,25 @@ enum DashboardIntelligenceService {
         }
 
         return streak
+    }
+
+    static func getWeeklyData(entries: [FoodEntry]) -> [DayCalories] {
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: .now)
+
+        return (0..<7).reversed().map { daysAgo in
+            let date = calendar.date(byAdding: .day, value: -daysAgo, to: today)!
+            let nextDay = calendar.date(byAdding: .day, value: 1, to: date)!
+            let dayEntries = entries.filter { $0.timestamp >= date && $0.timestamp < nextDay }
+            return DayCalories(
+                date: date,
+                calories: dayEntries.reduce(0.0) { $0 + $1.calories },
+                protein: dayEntries.reduce(0.0) { $0 + $1.protein },
+                carbs: dayEntries.reduce(0.0) { $0 + $1.carbs },
+                fat: dayEntries.reduce(0.0) { $0 + $1.fat },
+                weekday: date.shortWeekday
+            )
+        }
     }
 
     static func greeting(name: String? = nil) -> String {

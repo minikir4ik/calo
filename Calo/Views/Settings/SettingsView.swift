@@ -3,7 +3,9 @@ import SwiftData
 import RevenueCat
 
 struct SettingsView: View {
+    @Environment(\.modelContext) private var modelContext
     @Query private var allSettings: [UserSettings]
+    @Query private var allOnboarding: [OnboardingData]
     @EnvironmentObject private var premiumManager: PremiumManager
     @State private var showPaywall = false
     @State private var isRestoring = false
@@ -280,6 +282,45 @@ struct SettingsView: View {
                         .padding(.horizontal, 16)
                     }
 
+                    #if DEBUG
+                    // Debug Section
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("DEBUG")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(CaloTheme.subtleText)
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 8)
+
+                        VStack(spacing: 0) {
+                            Button {
+                                if let onboarding = allOnboarding.first {
+                                    onboarding.hasCompletedOnboarding = false
+                                }
+                            } label: {
+                                HStack {
+                                    Image(systemName: "arrow.counterclockwise")
+                                        .foregroundStyle(.yellow)
+                                    Text("Reset Onboarding")
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    Image(systemName: "chevron.right")
+                                        .font(.caption)
+                                        .foregroundStyle(CaloTheme.subtleText)
+                                }
+                                .padding(16)
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .background(CaloTheme.cardBackground, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .stroke(CaloTheme.cardBorder, lineWidth: 0.5)
+                        )
+                        .padding(.horizontal, 16)
+                    }
+                    #endif
+
                     Text("Calo v1.0 · Made by Mini Labs")
                         .font(.caption2)
                         .foregroundStyle(CaloTheme.subtleText)
@@ -292,12 +333,6 @@ struct SettingsView: View {
             .background(CaloTheme.background.ignoresSafeArea())
             .navigationTitle("Settings")
             .preferredColorScheme(.dark)
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button("Done") { hideKeyboard() }
-                }
-            }
             .sheet(isPresented: $showPaywall) {
                 PaywallView()
             }

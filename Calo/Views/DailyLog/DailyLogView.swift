@@ -7,6 +7,7 @@ struct DailyLogView: View {
     @Query private var allSettings: [UserSettings]
 
     @State private var selectedDate: Date = Calendar.current.startOfDay(for: .now)
+    @State private var expandedEntryID: UUID?
 
     private var settings: UserSettings? { allSettings.first }
 
@@ -50,6 +51,7 @@ struct DailyLogView: View {
                                     withAnimation(.easeInOut(duration: 0.2)) {
                                         selectedDate = date
                                     }
+                                    HapticManager.lightImpact()
                                 } label: {
                                     DateCircle(
                                         date: date,
@@ -66,7 +68,6 @@ struct DailyLogView: View {
 
                     // Summary card
                     VStack(spacing: 16) {
-                        // Calorie ring
                         ZStack {
                             Circle()
                                 .stroke(CaloTheme.cardBorder, lineWidth: 6)
@@ -87,7 +88,6 @@ struct DailyLogView: View {
                             }
                         }
 
-                        // Macro pills
                         HStack(spacing: 10) {
                             MacroPillCompact(label: "P", value: totalProtein, color: CaloTheme.accentGreen)
                             MacroPillCompact(label: "C", value: totalCarbs, color: CaloTheme.accentBlue)
@@ -121,10 +121,23 @@ struct DailyLogView: View {
                     } else {
                         List {
                             ForEach(entriesForDate.sorted(by: { $0.timestamp > $1.timestamp })) { entry in
-                                FoodEntryRow(entry: entry)
-                                    .listRowInsets(EdgeInsets(top: 10, leading: 20, bottom: 10, trailing: 20))
-                                    .listRowBackground(Color.clear)
-                                    .listRowSeparatorTint(CaloTheme.separator)
+                                ExpandableFoodRow(
+                                    entry: entry,
+                                    isExpanded: expandedEntryID == entry.id,
+                                    onTap: {
+                                        withAnimation(.easeInOut(duration: 0.25)) {
+                                            if expandedEntryID == entry.id {
+                                                expandedEntryID = nil
+                                            } else {
+                                                expandedEntryID = entry.id
+                                                HapticManager.lightImpact()
+                                            }
+                                        }
+                                    }
+                                )
+                                .listRowInsets(EdgeInsets(top: 6, leading: 20, bottom: 6, trailing: 20))
+                                .listRowBackground(Color.clear)
+                                .listRowSeparator(.hidden)
                             }
                             .onDelete(perform: deleteEntries)
                         }
@@ -144,10 +157,143 @@ struct DailyLogView: View {
         for index in offsets {
             modelContext.delete(sorted[index])
         }
+        HapticManager.lightImpact()
     }
 }
 
-// MARK: - Subviews
+// MARK: - Expandable Food Row
+
+private struct ExpandableFoodRow: View {
+    let entry: FoodEntry
+    let isExpanded: Bool
+    let onTap: () -> Void
+
+    private var components: [FoodEntry.Component] { entry.components }
+    private var hasComponents: Bool { components.count > 1 }
+
+    var body: some View {
+        Button(action: onTap) {
+            VStack(spacing: 0) {
+                // Main row
+                HStack(spacing: 12) {
+                    // Emoji
+                    if let emoji = entry.emoji, !emoji.isEmpty {
+                        Text(emoji)
+                            .font(.system(size: 28))
+                            .frame(width: 40, height: 40)
+                    } else {
+                        Circle()
+                            .fill(CaloTheme.coral.opacity(0.15))
+                            .frame(width: 40, height: 40)
+                            .overlay(
+                                Image(systemName: "fork.knife")
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(CaloTheme.coral)
+                            )
+                    }
+
+                    VStack(alignment: .leading, spacing: 3) {
+                        HStack(spacing: 6) {
+                            Text(entry.foodName)
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                            if entry.verified {
+                                Image(systemName: "checkmark.seal.fill")
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(CaloTheme.accentGreen)
+                            }
+                        }
+                        HStack(spacing: 6) {
+                            Text(entry.timeString)
+                                .font(.caption2)
+                                .foregroundStyle(CaloTheme.subtleText)
+                            if hasComponents {
+                                Text("·")
+                                    .foregroundStyle(CaloTheme.subtleText)
+                                Text("\(components.count) items")
+                                    .font(.caption2)
+                                    .foregroundStyle(CaloTheme.subtleText)
+                            }
+                        }
+                    }
+
+                    Spacer()
+
+                    VStack(alignment: .trailing, spacing: 4) {
+                        Text("\(entry.calories.wholeOrOne)")
+                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                            .foregroundStyle(CaloTheme.coral)
+                        + Text(" cal")
+                            .font(.system(.caption2, design: .rounded))
+                            .foregroundStyle(CaloTheme.subtleText)
+
+                        // Mini macro badges
+                        HStack(spacing: 4) {
+                            MicroBadge(text: "\(entry.protein.wholeOrOne)", color: CaloTheme.accentGreen)
+                            MicroBadge(text: "\(entry.carbs.wholeOrOne)", color: CaloTheme.accentBlue)
+                            MicroBadge(text: "\(entry.fat.wholeOrOne)", color: CaloTheme.accentPurple)
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+
+                // Expanded: component breakdown
+                if isExpanded && hasComponents {
+                    Divider()
+                        .background(CaloTheme.cardBorder)
+                        .padding(.vertical, 8)
+
+                    VStack(spacing: 6) {
+                        ForEach(components) { comp in
+                            HStack {
+                                Text(comp.name)
+                                    .font(.caption)
+                                    .foregroundStyle(.white.opacity(0.8))
+                                Spacer()
+                                Text("\(comp.calories.wholeOrOne) cal")
+                                    .font(.caption)
+                                    .foregroundStyle(CaloTheme.subtleText)
+                                Text("\(comp.protein.wholeOrOne)g P")
+                                    .font(.caption2)
+                                    .foregroundStyle(CaloTheme.accentGreen.opacity(0.7))
+                            }
+                        }
+                    }
+                    .padding(.bottom, 4)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+            }
+            .padding(12)
+            .background(
+                CaloTheme.cardBackground,
+                in: RoundedRectangle(cornerRadius: 14, style: .continuous)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .stroke(isExpanded ? CaloTheme.coral.opacity(0.3) : CaloTheme.cardBorder, lineWidth: 0.5)
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct MicroBadge: View {
+    let text: String
+    let color: Color
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 9, weight: .semibold, design: .rounded))
+            .foregroundStyle(color)
+            .padding(.horizontal, 4)
+            .padding(.vertical, 2)
+            .background(color.opacity(0.12), in: RoundedRectangle(cornerRadius: 4))
+    }
+}
+
+// MARK: - Shared Subviews
 
 struct DateCircle: View {
     let date: Date
@@ -186,7 +332,6 @@ struct DateCircle: View {
                     .foregroundStyle(isSelected ? .white : .white.opacity(0.7))
             }
 
-            // Data indicator dot
             Circle()
                 .fill(hasData ? CaloTheme.coral : Color.clear)
                 .frame(width: 4, height: 4)
@@ -211,55 +356,5 @@ struct MacroPillCompact: View {
         .padding(.horizontal, 10)
         .padding(.vertical, 6)
         .background(color.opacity(0.12), in: Capsule())
-    }
-}
-
-struct FoodEntryRow: View {
-    let entry: FoodEntry
-
-    var body: some View {
-        HStack(spacing: 12) {
-            // Food emoji or icon
-            if let emoji = entry.emoji, !emoji.isEmpty {
-                Text(emoji)
-                    .font(.system(size: 24))
-                    .frame(width: 36, height: 36)
-            } else {
-                Circle()
-                    .fill(CaloTheme.coral.opacity(0.15))
-                    .frame(width: 36, height: 36)
-                    .overlay(
-                        Image(systemName: "fork.knife")
-                            .font(.system(size: 14))
-                            .foregroundStyle(CaloTheme.coral)
-                    )
-            }
-
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
-                    Text(entry.foodName)
-                        .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.white)
-                    if entry.verified {
-                        Image(systemName: "checkmark.seal.fill")
-                            .font(.system(size: 10))
-                            .foregroundStyle(CaloTheme.accentGreen)
-                    }
-                }
-                Text(entry.timeString)
-                    .font(.caption2)
-                    .foregroundStyle(CaloTheme.subtleText)
-            }
-
-            Spacer()
-
-            Text("\(entry.calories.wholeOrOne)")
-                .font(.system(.subheadline, design: .rounded, weight: .semibold))
-                .foregroundStyle(.white)
-            + Text(" cal")
-                .font(.system(.caption2, design: .rounded))
-                .foregroundStyle(CaloTheme.subtleText)
-        }
-        .contentShape(Rectangle())
     }
 }

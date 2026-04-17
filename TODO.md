@@ -112,6 +112,29 @@
 - [x] Dashboard MealCard: emoji when no image
 - [x] Build: 0 errors, 0 warnings
 
+## Session 2.5: Fix Everything
+- [x] SettingsView: rewritten — all buttons (paywall, restore, privacy, terms, contact) now explicit Button()
+- [x] WelcomeView: brighter — radial glow, 52pt title, particle canvas, coral button
+- [x] GoalSelectionView: 5 goals (Lose Fat, Build Muscle, Eat Healthier, Stay Fit, Boost Performance)
+- [x] BodyStatsView: fixed jiggle — fixed-height frames, animation(nil) on sliders
+- [x] AISuggestSheet: tappable cards with expand/collapse + Log This Meal button
+- [x] Global keyboard dismiss via onTapGesture on root ContentView
+- [x] contentShape(Rectangle()) on all interactive rows
+- [x] Reset Onboarding debug button in Settings (#if DEBUG)
+- [x] FoodEntry.emoji changed to String? for SwiftData migration compatibility
+- [x] CaloApp: migration recovery — deletes old store if schema migration fails
+- [x] Removed keyboard Done toolbar (tap-outside dismisses instead)
+- [x] Build: 0 errors, 0 warnings
+
+## Session 3: Dashboard + Home Experience
+- [x] DashboardView full rebuild: header with avatar, intelligence card (tap to expand), 2x2 macro rings with overflow, quick actions with water badge, today's meals with dashed empty state, streak + weekly dots + mini bar chart
+- [x] DashboardIntelligenceService: getDailyInsight with name personalization + icon, getWeeklyData
+- [x] CircularProgressCard: overflow ring (past 100%) with faded color
+- [x] Tab bar: 5 tabs — Home, Log, Scan (center, opens sheet), Charts, Settings
+- [x] DailyLogView: expandable meal rows with component breakdown, micro macro badges, haptic on expand
+- [x] Haptics on tab switch, scan open, date selection, entry expand
+- [x] Build: 0 errors, 0 warnings
+
 ## Phase 6 TODO
 - [ ] Archive build in Xcode
 - [ ] Upload to App Store Connect

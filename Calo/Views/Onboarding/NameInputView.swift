@@ -74,11 +74,8 @@ struct NameInputView: View {
         }
         .animation(.easeInOut(duration: 0.35), value: name.isEmpty)
         .background(Color.black.ignoresSafeArea())
-        .toolbar {
-            ToolbarItemGroup(placement: .keyboard) {
-                Spacer()
-                Button("Done") { isFocused = false }
-            }
+        .onTapGesture {
+            isFocused = false
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
